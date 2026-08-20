@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>讀書軟體</title>
+    <title>讀書軟體 - 專業增強版</title>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-main: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #2e1065 100%);
+            --bg-img-1: url('https://i.ibb.co/1f9kjZvX/1000010527.jpg');
+            --bg-img-2: url('https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg'); [source: 3]
+            --bg-overlay: rgba(15, 23, 42, 0.75);
             --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             --glass-blur: 20px;
             
             --accent: #818cf8;
             --accent-hover: #6366f1;
             --text-main: #f8fafc;
-            --text-sub: #94a3b8;
+            --text-sub: #cbd5e1;
             --card-radius: 20px;
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif;
         }
@@ -31,9 +33,7 @@
         }
 
         body {
-            background: var(--bg-main);
-            background-attachment: fixed;
-            background-size: cover;
+            background: linear-gradient(var(--bg-overlay), var(--bg-overlay)), var(--bg-img-1) center/cover no-repeat fixed;
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -57,12 +57,12 @@
         .lock-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://i.ibb.co/1f9kjZvX/1000010527.jpg') center/cover no-repeat;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)), var(--bg-img-1) center/cover no-repeat;
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
         }
 
         .lock-box {
@@ -86,11 +86,11 @@
 
         /* 側邊欄 Sidebar */
         aside {
-            width: 270px;
+            width: 280px;
             padding: 20px 16px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
             flex-shrink: 0;
         }
 
@@ -108,6 +108,7 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--accent);
+            box-shadow: 0 0 10px rgba(129, 140, 248, 0.5);
         }
 
         .brand-title {
@@ -139,9 +140,18 @@
         }
 
         .nav-item:hover, .nav-item.active {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.18);
             color: var(--text-main);
             border-left: 4px solid var(--accent);
+        }
+
+        /* 倒數計時元件 */
+        .countdown-card {
+            padding: 12px 14px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
         }
 
         /* 手機端 Bottom Nav */
@@ -154,7 +164,7 @@
             border-radius: 20px 20px 0 0;
             justify-content: space-around;
             align-items: center;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.92);
             backdrop-filter: blur(20px);
             border-top: 1px solid var(--glass-border);
         }
@@ -191,7 +201,7 @@
 
         /* 控制元件 */
         input, select, textarea, button {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.35);
             border: 1px solid var(--glass-border);
             color: var(--text-main);
             padding: 10px 14px;
@@ -233,12 +243,13 @@
         }
 
         .timer-status-badge {
-            background: rgba(129, 140, 248, 0.2);
+            background: rgba(129, 140, 248, 0.25);
             color: var(--accent);
             padding: 6px 16px;
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: bold;
+            border: 1px solid rgba(129, 140, 248, 0.3);
         }
 
         .timer-text {
@@ -246,7 +257,7 @@
             font-weight: 800;
             font-family: 'Courier New', Courier, monospace;
             letter-spacing: 2px;
-            text-shadow: 0 0 25px rgba(129, 140, 248, 0.4);
+            text-shadow: 0 0 25px rgba(129, 140, 248, 0.5);
         }
 
         .subject-input-group {
@@ -271,7 +282,22 @@
             font-size: 1rem;
         }
 
-        /* 全螢幕專注模式 */
+        /* 全螢幕專注模式 (Zen Mode) */
+        .zen-exit-btn {
+            display: none;
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 2001;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+        }
+
         .zen-active .app-layout > aside,
         .zen-active .mobile-nav-bar,
         .zen-active header,
@@ -279,12 +305,16 @@
             display: none !important;
         }
 
+        .zen-active .zen-exit-btn {
+            display: block;
+        }
+
         .zen-active .timer-wrapper {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 2000;
             justify-content: center;
-            background: var(--bg-main);
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img-2) center/cover no-repeat; [source: 3]
             border-radius: 0;
         }
 
@@ -314,14 +344,14 @@
         }
 
         .note-card-item:hover, .note-card-item.active {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.15);
             border-color: var(--accent);
         }
 
         /* 主動回想塊 */
         .active-recall-block {
             border-left: 4px solid var(--accent);
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.3);
             padding: 12px;
             border-radius: 0 10px 10px 0;
             margin: 10px 0;
@@ -344,9 +374,9 @@
             color: var(--text-main);
         }
 
-        /* 閃卡卡片 */
+        /* 閃卡卡片 - 融入背景圖 */
         .flashcard-container {
-            min-height: 220px;
+            min-height: 240px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -355,22 +385,23 @@
 
         .flashcard {
             width: 100%;
-            max-width: 480px;
-            min-height: 220px;
-            background: rgba(255,255,255,0.06);
+            max-width: 500px;
+            min-height: 240px;
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), var(--bg-img-2) center/cover no-repeat; [source: 3]
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 20px;
+            padding: 28px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
-        .flashcard:hover { transform: scale(1.02); border-color: var(--accent); }
+        .flashcard:hover { transform: translateY(-3px); border-color: var(--accent); }
 
         /* 待辦事項 */
         .todo-item {
@@ -437,11 +468,14 @@
 </head>
 <body>
 
+    <!-- Zen Mode 手機/桌面 懸浮退出按鈕 -->
+    <button class="zen-exit-btn" onclick="toggleZenMode()">❌ 退出全螢幕專注</button>
+
     <!-- 密碼鎖畫面 (Password Protection) -->
     <div class="lock-screen" id="lockScreen" style="display: none;">
         <div class="glass-panel lock-box">
             <h2 style="color: var(--accent);" id="lockTitle">🔒 請輸入解鎖密碼</h2>
-            <input type="password" id="passwordInput" placeholder="請輸入密碼..." style="text-align: center; font-size: 1.1rem;">
+            <input type="password" id="passwordInput" placeholder="請輸入密碼..." style="text-align: center; font-size: 1.1rem;" onkeypress="if(event.key==='Enter') checkPassword()">
             <button onclick="checkPassword()" style="padding: 10px; font-size: 1rem;">進入讀書軟體</button>
             <p id="lockMsg" style="font-size: 0.82rem; color: #f87171; min-height: 1.2em;"></p>
         </div>
@@ -452,9 +486,16 @@
         <!-- 桌面側邊欄 -->
         <aside class="glass-panel">
             <div class="brand-header">
-                <img src="https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg" alt="Logo" class="brand-avatar">
+                <img src="https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg" alt="Logo" class="brand-avatar"> [source: 3]
                 <div class="brand-title">讀書軟體</div>
             </div>
+
+            <!-- 考試倒數計時小區塊 -->
+            <div class="countdown-card">
+                <span style="font-size: 0.8rem; color: var(--text-sub);" id="targetExamTitle">🎯 目標考試倒數</span>
+                <div id="examCountdown" style="font-size: 1.15rem; font-weight: 800; color: var(--accent); margin-top: 2px;">倒數 -- 天</div>
+            </div>
+
             <ul class="nav-list">
                 <li class="nav-item active" onclick="switchNavTab('timer', this)">⏱️ 讀書計時</li>
                 <li class="nav-item" onclick="switchNavTab('todo', this)">✅ 今日任務</li>
@@ -475,7 +516,7 @@
                     <!-- 當前科目選單與自訂 -->
                     <div class="non-zen-hide subject-input-group">
                         <label style="color: var(--text-sub); font-size: 0.9rem; white-space: nowrap;">讀書科目：</label>
-                        <select id="timerSubjectDropdown" style="flex: 1;" onchange="syncCurrentSubject()"></select>
+                        <select id="timerSubjectDropdown" style="flex: 1;"></select>
                         <input type="text" id="customSubjectQuickInput" placeholder="或自訂新科目..." style="width: 130px;" onkeypress="if(event.key==='Enter') addQuickSubject()">
                     </div>
 
@@ -491,12 +532,18 @@
                         <button onclick="toggleZenMode()" style="background: rgba(255,255,255,0.15);">🧘 全螢幕</button>
                     </div>
 
-                    <div class="non-zen-hide" style="margin-top: 6px; display: flex; gap: 10px; align-items: center; font-size: 0.85rem;">
-                        <span>🎧 白噪音：</span>
-                        <select id="bgSoundSelect" onchange="toggleAudioNoise()">
-                            <option value="none">關閉</option>
-                            <option value="pink">粉紅噪音 (專注降噪)</option>
-                        </select>
+                    <div class="non-zen-hide" style="margin-top: 6px; display: flex; gap: 12px; align-items: center; font-size: 0.85rem; flex-wrap: wrap; justify-content: center;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span>🎧 白噪音：</span>
+                            <select id="bgSoundSelect" onchange="toggleAudioNoise()">
+                                <option value="none">關閉</option>
+                                <option value="pink">粉紅噪音 (專注降噪)</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span>🔊 音量：</span>
+                            <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.2" style="width: 80px; padding: 0;" oninput="adjustVolume(this.value)">
+                        </div>
                     </div>
                 </div>
             </section>
@@ -529,14 +576,16 @@
                             <button onclick="deleteCurrentNote()" style="background: #f87171;">刪除</button>
                         </div>
 
-                        <div style="display: flex; gap: 8px; margin: 4px 0;">
-                            <button onclick="insertModule('recall')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">+ 插入問題解答塊 (❓/💡)</button>
+                        <div style="display: flex; gap: 8px; margin: 4px 0; flex-wrap: wrap;">
+                            <button onclick="insertModule('recall')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">+ 插入閃卡塊 (❓/💡)</button>
+                            <button onclick="insertModule('bold')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">**粗體**</button>
+                            <button onclick="insertModule('header')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">### 標題</button>
                         </div>
 
-                        <textarea id="noteBodyInput" style="flex: 1; resize: none; min-height: 200px; line-height: 1.6;" placeholder="在此輸入筆記內容，文字會自動即時儲存..." oninput="onNoteAutoSave()"></textarea>
+                        <textarea id="noteBodyInput" style="flex: 1; resize: none; min-height: 200px; line-height: 1.6;" placeholder="在此輸入筆記內容，支援 Markdown 與主動回想塊..." oninput="onNoteAutoSave()"></textarea>
 
                         <div style="border-top: 1px solid var(--glass-border); padding-top: 10px;">
-                            <h4 style="margin-bottom: 8px; color: var(--text-sub);">📖 預覽與展開測試</h4>
+                            <h4 style="margin-bottom: 8px; color: var(--text-sub);">📖 即時預覽與展開測試</h4>
                             <div id="notePreviewRender" style="line-height: 1.6;"></div>
                         </div>
                     </div>
@@ -552,7 +601,7 @@
                     <div class="flashcard-container">
                         <div class="flashcard" onclick="flipFlashcard()" id="flashcardBox">
                             <span id="flashcardTag" style="font-size:0.85rem; color:var(--accent); margin-bottom:8px;">點擊翻面</span>
-                            <div id="flashcardContent" style="font-size: 1.2rem; font-weight: bold; line-height: 1.5;">目前無閃卡內容</div>
+                            <div id="flashcardContent" style="font-size: 1.25rem; font-weight: bold; line-height: 1.5;">目前無閃卡內容</div>
                         </div>
                     </div>
 
@@ -612,14 +661,23 @@
                 <h2>⚙️ 軟體偏好與客製化設定</h2>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+
+                    <!-- 考試倒數設定 -->
+                    <div class="glass-panel" style="padding: 20px;">
+                        <h3>🎯 目標考試倒數計時</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                            <input type="text" id="examNameInput" placeholder="考試名稱 (例如：期末考、學測)">
+                            <input type="date" id="examDateInput">
+                            <button onclick="saveExamSetting()">更新倒數目標</button>
+                        </div>
+                    </div>
                     
                     <!-- 密碼鎖設定 -->
                     <div class="glass-panel" style="padding: 20px;">
-                        <h3>🔒 每次開啟網站密碼保護</h3>
-                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，每次關閉或重新整理網頁都需要解鎖。</p>
-                        
+                        <h3>🔒 密碼保護</h3>
+                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，開啟網頁需解鎖。</p>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <input type="password" id="setNewPasswordInput" placeholder="設定新密碼 (留空代表取消密碼)">
+                            <input type="password" id="setNewPasswordInput" placeholder="設定新密碼 (留空取消)">
                             <button onclick="savePasswordSetting()">儲存密碼設定</button>
                         </div>
                     </div>
@@ -636,7 +694,7 @@
 
                     <!-- 番茄鐘時間設定 -->
                     <div class="glass-panel" style="padding: 20px;">
-                        <h3>⏱️ 番茄鐘專注與休息時間</h3>
+                        <h3>⏱️ 番茄鐘時間設定</h3>
                         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                             <div>
                                 <label style="font-size:0.85rem; color: var(--text-sub);">專注時間 (分鐘):</label>
@@ -650,14 +708,14 @@
                         </div>
                     </div>
 
-                    <!-- 主題風格 -->
+                    <!-- 背景風格切換 -->
                     <div class="glass-panel" style="padding: 20px;">
-                        <h3>🎨 色彩風格</h3>
+                        <h3>🎨 背景風格與遮罩</h3>
                         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                             <select id="themeSelect" onchange="applyThemeSetting(this.value)">
-                                <option value="morandi">深夜藍 (Default Morandi)</option>
+                                <option value="default_img">預設背景 (相片背景 1)</option>
+                                <option value="morandi">深夜藍 (Morandi Blue)</option>
                                 <option value="emerald">護眼綠 (Aurora Emerald)</option>
-                                <option value="sunset">暖夕陽 (Warm Sunset)</option>
                                 <option value="dark">極簡黑 (OLED Black)</option>
                             </select>
                         </div>
@@ -666,7 +724,7 @@
                     <!-- 資料備份 -->
                     <div class="glass-panel" style="padding: 20px;">
                         <h3>💾 資料備份與轉移</h3>
-                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">可將所有筆記與紀錄導出備份。</p>
+                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">可將所有筆記與紀錄導出 JSON 備份。</p>
                         <div style="display: flex; gap: 8px;">
                             <button onclick="exportJSONBackup()" style="background: rgba(255,255,255,0.15); flex:1;">匯出備份</button>
                             <button onclick="importJSONBackup()" style="background: rgba(255,255,255,0.15); flex:1;">匯入備份</button>
@@ -688,7 +746,7 @@
     </nav>
 
     <script>
-        // 本地全域狀態 State
+        // 全域 State 增強版
         let appState = {
             password: localStorage.getItem('aura_password') || '',
             subjects: JSON.parse(localStorage.getItem('aura_subjects')) || ["國文", "英文", "數學", "專業科目"],
@@ -696,7 +754,7 @@
             breakMins: parseInt(localStorage.getItem('aura_breakMins')) || 5,
             sessions: JSON.parse(localStorage.getItem('aura_sessions')) || [],
             todos: JSON.parse(localStorage.getItem('aura_todos')) || [
-                { id: 't1', text: '歡迎使用讀書軟體！可在今日任務寫下學習目標。', completed: false }
+                { id: 't1', text: '歡迎使用讀書軟體！點擊「帶入計時」開啟任務。', completed: false }
             ],
             notes: JSON.parse(localStorage.getItem('aura_notes')) || [
                 { 
@@ -707,8 +765,12 @@
                     updatedAt: new Date().toLocaleString() 
                 }
             ],
+            exam: JSON.parse(localStorage.getItem('aura_exam')) || {
+                name: '目標考試',
+                date: '2026-06-18'
+            },
             settings: JSON.parse(localStorage.getItem('aura_settings')) || {
-                theme: 'morandi'
+                theme: 'default_img'
             }
         };
 
@@ -725,9 +787,9 @@
 
         let audioCtx = null;
         let noiseSource = null;
+        let gainNode = null;
 
         window.onload = function() {
-            // 檢查是否需顯示密碼解鎖畫面
             if (appState.password) {
                 document.getElementById('lockScreen').style.display = 'flex';
             }
@@ -741,9 +803,14 @@
             updateTimerDisplay();
             renderDashboard();
             extractFlashcards();
+            updateExamCountdown();
+
+            // 預載倒數計時欄位
+            document.getElementById('examNameInput').value = appState.exam.name || '';
+            document.getElementById('examDateInput').value = appState.exam.date || '';
         };
 
-        /* 密碼檢查機制 */
+        /* 密碼檢查 */
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
             if (input === appState.password) {
@@ -758,6 +825,29 @@
             appState.password = newPwd;
             localStorage.setItem('aura_password', newPwd);
             alert(newPwd ? '已成功設定解鎖密碼！' : '已取消密碼保護！');
+        }
+
+        /* 倒數計時管理 */
+        function saveExamSetting() {
+            const name = document.getElementById('examNameInput').value.trim() || '目標考試';
+            const date = document.getElementById('examDateInput').value;
+            if(!date) return alert('請選擇考試日期！');
+            
+            appState.exam = { name, date };
+            localStorage.setItem('aura_exam', JSON.stringify(appState.exam));
+            updateExamCountdown();
+            alert('目標考試設定已儲存！');
+        }
+
+        function updateExamCountdown() {
+            if(!appState.exam || !appState.exam.date) return;
+            document.getElementById('targetExamTitle').innerText = `🎯 ${appState.exam.name}`;
+            const target = new Date(appState.exam.date);
+            const now = new Date();
+            const diffTime = target - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            document.getElementById('examCountdown').innerText = diffDays > 0 ? `倒數 ${diffDays} 天` : (diffDays === 0 ? '就是今天！' : '考試已結束');
         }
 
         /* 導覽切換 */
@@ -781,21 +871,17 @@
             if(tabId === 'cards') extractFlashcards();
         }
 
-        /* 主題切換 */
+        /* 主題與背景切換 */
         function applyThemeSetting(val, save=true) {
             const root = document.documentElement;
-            if(val === 'morandi') {
-                root.style.setProperty('--bg-main', 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #2e1065 100%)');
-                root.style.setProperty('--accent', '#818cf8');
+            if(val === 'default_img') {
+                root.style.setProperty('--bg-overlay', 'rgba(15, 23, 42, 0.75)');
+            } else if(val === 'morandi') {
+                root.style.setProperty('--bg-overlay', 'rgba(15, 23, 42, 0.95)');
             } else if(val === 'emerald') {
-                root.style.setProperty('--bg-main', 'linear-gradient(135deg, #064e3b 0%, #022c22 50%, #0f172a 100%)');
-                root.style.setProperty('--accent', '#34d399');
-            } else if(val === 'sunset') {
-                root.style.setProperty('--bg-main', 'linear-gradient(135deg, #451a03 0%, #78350f 50%, #18181b 100%)');
-                root.style.setProperty('--accent', '#fbbf24');
+                root.style.setProperty('--bg-overlay', 'rgba(6, 78, 59, 0.92)');
             } else if(val === 'dark') {
-                root.style.setProperty('--bg-main', '#000000');
-                root.style.setProperty('--accent', '#a855f7');
+                root.style.setProperty('--bg-overlay', 'rgba(0, 0, 0, 0.96)');
             }
             if(save) { 
                 appState.settings.theme = val; 
@@ -803,7 +889,7 @@
             }
         }
 
-        /* 科目管理與快捷新增 */
+        /* 科目管理 */
         function renderSubjectDropdowns() {
             const tSel = document.getElementById('timerSubjectDropdown');
             const nSel = document.getElementById('noteSubjectDropdown');
@@ -858,7 +944,7 @@
             renderSubjectManageList();
         }
 
-        /* 待辦清單 Todo */
+        /* 待辦 Todo */
         function renderTodoList() {
             const container = document.getElementById('todoListContainer');
             container.innerHTML = '';
@@ -917,7 +1003,7 @@
             }
         }
 
-        /* 筆記系統 Auto-Save */
+        /* 筆記系統 */
         let autoSaveTimer = null;
         function onNoteAutoSave() {
             if(autoSaveTimer) clearTimeout(autoSaveTimer);
@@ -997,6 +1083,10 @@
             const input = document.getElementById('noteBodyInput');
             if(type === 'recall') {
                 input.value += `\n❓ [在這裡輸入問題？]\n💡 答案：在此輸入詳細解答\n`;
+            } else if(type === 'bold') {
+                input.value += ` **粗體文字** `;
+            } else if(type === 'header') {
+                input.value += `\n### 標題名稱\n`;
             }
             onNoteAutoSave();
         }
@@ -1005,14 +1095,17 @@
             const raw = document.getElementById('noteBodyInput').value;
             const container = document.getElementById('notePreviewRender');
             
-            let formatted = raw.replace(/❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g, (match, q, a) => {
-                return `
-                    <div class="active-recall-block">
-                        <div class="recall-question" onclick="toggleRecallAns(this)">❓ ${q} <span>▼</span></div>
-                        <div class="recall-answer">💡 ${a}</div>
-                    </div>
-                `;
-            });
+            let formatted = raw
+                .replace(/❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g, (match, q, a) => {
+                    return `
+                        <div class="active-recall-block">
+                            <div class="recall-question" onclick="toggleRecallAns(this)">❓ ${q} <span>▼</span></div>
+                            <div class="recall-answer">💡 ${a}</div>
+                        </div>
+                    `;
+                })
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^### (.*$)/gim, '<h3 style="margin:8px 0; color:var(--accent);">$1</h3>');
 
             container.innerHTML = formatted.replace(/\n/g, '<br>');
         }
@@ -1022,7 +1115,7 @@
             ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
         }
 
-        /* 閃卡系統 Flashcards */
+        /* 閃卡 Flashcards */
         function extractFlashcards() {
             flashcardList = [];
             const regex = /❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g;
@@ -1077,7 +1170,7 @@
             renderFlashcard();
         }
 
-        /* 計時器邏輯 */
+        /* 計時器與全螢幕 Mode */
         function updateTimerDisplay() {
             let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
             let s = (timeLeft % 60).toString().padStart(2, '0');
@@ -1152,7 +1245,7 @@
             }
         }
 
-        /* 白噪音 */
+        /* 白噪音增強（音量調節 + 資源釋放） */
         function toggleAudioNoise() {
             const type = document.getElementById('bgSoundSelect').value;
             if(type === 'pink') {
@@ -1176,14 +1269,26 @@
                     noiseSource = audioCtx.createBufferSource();
                     noiseSource.buffer = buffer;
                     noiseSource.loop = true;
-                    noiseSource.connect(audioCtx.destination);
+
+                    gainNode = audioCtx.createGain();
+                    gainNode.gain.value = parseFloat(document.getElementById('volumeSlider').value);
+
+                    noiseSource.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
                     noiseSource.start();
                 }
             } else {
                 if(noiseSource) {
                     noiseSource.stop();
-                    audioCtx = null; noiseSource = null;
+                    audioCtx.close();
+                    audioCtx = null; noiseSource = null; gainNode = null;
                 }
+            }
+        }
+
+        function adjustVolume(val) {
+            if(gainNode) {
+                gainNode.gain.value = parseFloat(val);
             }
         }
 
@@ -1270,6 +1375,7 @@
                             localStorage.setItem('aura_sessions', JSON.stringify(appState.sessions));
                             localStorage.setItem('aura_todos', JSON.stringify(appState.todos || []));
                             localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
+                            localStorage.setItem('aura_exam', JSON.stringify(appState.exam || {}));
                             localStorage.setItem('aura_settings', JSON.stringify(appState.settings));
                             location.reload();
                         }
