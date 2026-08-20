@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuraStudy Studio Pro - 完全客製化極致學習工作站</title>
+    <title>讀書軟體</title>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            /* 預設主題變數 - 莫蘭迪夜空 (Morandi Night) */
             --bg-main: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #2e1065 100%);
             --glass-bg: rgba(255, 255, 255, 0.08);
             --glass-border: rgba(255, 255, 255, 0.15);
@@ -17,12 +16,10 @@
             
             --accent: #818cf8;
             --accent-hover: #6366f1;
-            --break-color: #34d399;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --card-radius: 20px;
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --font-size: 16px;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif;
         }
 
         * {
@@ -32,8 +29,6 @@
             font-family: var(--font-family);
             -webkit-tap-highlight-color: transparent;
         }
-
-        html { font-size: var(--font-size); }
 
         body {
             background: var(--bg-main);
@@ -58,6 +53,28 @@
             transition: all 0.3s ease;
         }
 
+        /* 密碼鎖定遮罩 */
+        .lock-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://i.ibb.co/1f9kjZvX/1000010527.jpg') center/cover no-repeat;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .lock-box {
+            width: 90%;
+            max-width: 360px;
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
         .app-layout {
             display: flex;
             flex: 1;
@@ -67,24 +84,38 @@
             box-sizing: border-box;
         }
 
-        /* 側邊欄 Sidebar (桌面) */
+        /* 側邊欄 Sidebar */
         aside {
             width: 270px;
-            padding: 24px 16px;
+            padding: 20px 16px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
             flex-shrink: 0;
         }
 
-        .brand-logo {
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .brand-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+
+        .brand-title {
             font-size: 1.3rem;
             font-weight: 800;
-            letter-spacing: 1px;
             background: linear-gradient(45deg, #c084fc, var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-align: center;
         }
 
         .nav-list {
@@ -123,7 +154,7 @@
             border-radius: 20px 20px 0 0;
             justify-content: space-around;
             align-items: center;
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.9);
             backdrop-filter: blur(20px);
             border-top: 1px solid var(--glass-border);
         }
@@ -158,32 +189,9 @@
 
         .view-section.active { display: flex; }
 
-        /* 功能引導小提示卡片 */
-        .guide-banner {
-            background: rgba(129, 140, 248, 0.12);
-            border: 1px dashed var(--accent);
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.88rem;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            line-height: 1.5;
-        }
-
-        .guide-banner .close-btn {
-            cursor: pointer;
-            opacity: 0.7;
-            font-weight: bold;
-            padding: 0 6px;
-        }
-
-        .guide-banner .close-btn:hover { opacity: 1; }
-
         /* 控制元件 */
         input, select, textarea, button {
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--glass-border);
             color: var(--text-main);
             padding: 10px 14px;
@@ -215,12 +223,12 @@
 
         /* 計時器面板 */
         .timer-wrapper {
-            padding: 30px 20px;
+            padding: 35px 20px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 18px;
             position: relative;
         }
 
@@ -229,23 +237,31 @@
             color: var(--accent);
             padding: 6px 16px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: bold;
         }
 
         .timer-text {
-            font-size: clamp(3.5rem, 12vw, 6.5rem);
+            font-size: clamp(3.8rem, 13vw, 7rem);
             font-weight: 800;
-            font-family: monospace;
+            font-family: 'Courier New', Courier, monospace;
             letter-spacing: 2px;
             text-shadow: 0 0 25px rgba(129, 140, 248, 0.4);
+        }
+
+        .subject-input-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            max-width: 360px;
+            align-items: center;
         }
 
         .timer-btn-group {
             display: flex;
             gap: 12px;
             width: 100%;
-            max-width: 340px;
+            max-width: 360px;
             justify-content: center;
         }
 
@@ -255,7 +271,7 @@
             font-size: 1rem;
         }
 
-        /* 靜心禪模式 (Zen Mode) */
+        /* 全螢幕專注模式 */
         .zen-active .app-layout > aside,
         .zen-active .mobile-nav-bar,
         .zen-active header,
@@ -272,24 +288,16 @@
             border-radius: 0;
         }
 
-        /* 筆記與模組系統 */
+        /* 筆記模組 */
         .note-workspace {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 260px 1fr;
             gap: 16px;
-            height: calc(100vh - 140px);
+            height: calc(100vh - 80px);
         }
 
-        .note-sidebar {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            overflow-y: auto;
-        }
-
-        .note-editor-panel {
-            padding: 20px;
+        .note-sidebar, .note-editor-panel {
+            padding: 18px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -303,9 +311,6 @@
             border: 1px solid transparent;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
         }
 
         .note-card-item:hover, .note-card-item.active {
@@ -313,7 +318,7 @@
             border-color: var(--accent);
         }
 
-        /* 折疊式主動回想塊 */
+        /* 主動回想塊 */
         .active-recall-block {
             border-left: 4px solid var(--accent);
             background: rgba(0, 0, 0, 0.25);
@@ -342,7 +347,6 @@
         /* 閃卡卡片 */
         .flashcard-container {
             min-height: 220px;
-            perspective: 1000px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -366,12 +370,9 @@
             transition: transform 0.3s ease;
         }
 
-        .flashcard:hover {
-            transform: scale(1.02);
-            border-color: var(--accent);
-        }
+        .flashcard:hover { transform: scale(1.02); border-color: var(--accent); }
 
-        /* 待辦清單 UI */
+        /* 待辦事項 */
         .todo-item {
             display: flex;
             align-items: center;
@@ -387,7 +388,7 @@
             color: var(--text-sub);
         }
 
-        /* 數據 Dashboard */
+        /* 數據圖表與統計 */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -422,38 +423,6 @@
 
         .history-table th { color: var(--text-sub); }
 
-        /* 彈出視窗 */
-        .modal-mask {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-box {
-            max-width: 500px;
-            width: 100%;
-            padding: 28px;
-            text-align: center;
-        }
-
-        .sync-indicator {
-            font-size: 0.8rem;
-            color: #a7f3d0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .sync-indicator.show { opacity: 1; }
-
         @media (max-width: 768px) {
             .app-layout { padding: 10px; }
             aside { display: none; }
@@ -462,121 +431,97 @@
                 grid-template-columns: 1fr;
                 height: auto;
             }
-            .note-sidebar { max-height: 200px; }
+            .note-sidebar { max-height: 180px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 新手引導與隱私提示 Modal -->
-    <div class="modal-mask" id="privacyNoticeModal">
-        <div class="glass-panel modal-box">
-            <span style="background: #10b981; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold;">
-                100% 完全客製化 • 本地無感儲存
-            </span>
-            <h2 style="margin: 16px 0 8px 0; color: var(--accent);">歡迎使用 AuraStudy Studio Pro</h2>
-            <p style="color: var(--text-sub); font-size: 0.9rem; line-height: 1.6; text-align: left; margin-bottom: 20px;">
-                🎯 <strong>專為個人讀書設計的核心特色：</strong><br>
-                1. <strong>完全自由自訂科目</strong>：你想讀什麼科目、專業或技能，全部由你自主建立與設定！<br>
-                2. <strong>精緻易上手引導</strong>：每區皆配有簡明功能說明，協助你迅速掌握高效學習法。<br>
-                3. <strong>自動即時儲存</strong>：所有筆記、專注紀錄與待辦事項皆即時儲存於您的設備，關閉網頁也不丟失。
-            </p>
-            <button onclick="closeNoticeModal()" style="width: 100%; padding: 12px; font-size: 1rem;">打造我的個人讀書空間 🚀</button>
+    <!-- 密碼鎖畫面 (Password Protection) -->
+    <div class="lock-screen" id="lockScreen" style="display: none;">
+        <div class="glass-panel lock-box">
+            <h2 style="color: var(--accent);" id="lockTitle">🔒 請輸入解鎖密碼</h2>
+            <input type="password" id="passwordInput" placeholder="請輸入密碼..." style="text-align: center; font-size: 1.1rem;">
+            <button onclick="checkPassword()" style="padding: 10px; font-size: 1rem;">進入讀書軟體</button>
+            <p id="lockMsg" style="font-size: 0.82rem; color: #f87171; min-height: 1.2em;"></p>
         </div>
     </div>
 
     <!-- 應用主要版面 -->
     <div class="app-layout" id="appLayout">
-        <!-- 桌面端 Sidebar -->
+        <!-- 桌面側邊欄 -->
         <aside class="glass-panel">
-            <div class="brand-logo">✨ AuraStudy Pro</div>
-            <ul class="nav-list">
-                <li class="nav-item active" onclick="switchNavTab('timer', this)">⏱️ 專注讀書計時</li>
-                <li class="nav-item" onclick="switchNavTab('todo', this)">✅ 今日學習任務</li>
-                <li class="nav-item" onclick="switchNavTab('notes', this)">📁 筆記庫 (自動儲存)</li>
-                <li class="nav-item" onclick="switchNavTab('cards', this)">🎴 閃卡記憶卡片</li>
-                <li class="nav-item" onclick="switchNavTab('dashboard', this)">📊 讀數數據分析</li>
-                <li class="nav-item" onclick="switchNavTab('custom', this)">📚 客製科目與偏好</li>
-            </ul>
-            
-            <div style="margin-top: auto;">
-                <div class="sync-indicator" id="autoSaveIndicator">
-                    <span>⚡</span> 已即時同步寫入本地存儲
-                </div>
+            <div class="brand-header">
+                <img src="https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg" alt="Logo" class="brand-avatar">
+                <div class="brand-title">讀書軟體</div>
             </div>
+            <ul class="nav-list">
+                <li class="nav-item active" onclick="switchNavTab('timer', this)">⏱️ 讀書計時</li>
+                <li class="nav-item" onclick="switchNavTab('todo', this)">✅ 今日任務</li>
+                <li class="nav-item" onclick="switchNavTab('notes', this)">📁 讀書筆記</li>
+                <li class="nav-item" onclick="switchNavTab('cards', this)">🎴 抽考閃卡</li>
+                <li class="nav-item" onclick="switchNavTab('dashboard', this)">📊 學習統計</li>
+                <li class="nav-item" onclick="switchNavTab('custom', this)">⚙️ 軟體偏好與密碼</li>
+            </ul>
         </aside>
 
-        <!-- 主內容視圖 -->
+        <!-- 主內容區 -->
         <main>
-            <!-- 1. 專注計時視圖 -->
+            <!-- 1. 專注計時器 -->
             <section id="timer" class="view-section active">
-                <div class="guide-banner" id="timerGuide">
-                    <span>💡 <strong>使用說明：</strong> 選擇你客製化的讀書科目，點擊「開始專注」。建議搭配「粉紅音效」阻隔噪音，或開啟「🧘 禪模式」打造零干擾全螢幕環境。</span>
-                    <span class="close-btn" onclick="hideGuide('timerGuide')">✕</span>
-                </div>
-
                 <div class="glass-panel timer-wrapper">
                     <span class="timer-status-badge" id="timerModeTag">🎯 專注模式</span>
                     
-                    <div class="non-zen-hide" style="display: flex; gap: 10px; align-items: center; justify-content: center; width: 100%; max-width: 340px;">
-                        <label style="color: var(--text-sub); font-size: 0.9rem;">當前讀書科目：</label>
-                        <select id="timerSubjectDropdown" style="flex: 1;"></select>
+                    <!-- 當前科目選單與自訂 -->
+                    <div class="non-zen-hide subject-input-group">
+                        <label style="color: var(--text-sub); font-size: 0.9rem; white-space: nowrap;">讀書科目：</label>
+                        <select id="timerSubjectDropdown" style="flex: 1;" onchange="syncCurrentSubject()"></select>
+                        <input type="text" id="customSubjectQuickInput" placeholder="或自訂新科目..." style="width: 130px;" onkeypress="if(event.key==='Enter') addQuickSubject()">
                     </div>
 
                     <div class="timer-text" id="timerDisplay">25:00</div>
 
-                    <div class="non-zen-hide" style="width: 100%; max-width: 340px;">
-                        <input type="text" id="sessionTagInput" placeholder="輸入當前研讀章節/具體目標..." style="width: 100%; text-align: center;">
+                    <div class="non-zen-hide" style="width: 100%; max-width: 360px;">
+                        <input type="text" id="sessionTagInput" placeholder="寫下當前目標（例如：算完第三章...）" style="width: 100%; text-align: center;">
                     </div>
 
                     <div class="timer-btn-group">
                         <button id="startTimerBtn" onclick="toggleTimer()">開始專注</button>
                         <button onclick="resetTimer()" style="background: rgba(255,255,255,0.15);">重設</button>
-                        <button onclick="toggleZenMode()" style="background: rgba(255,255,255,0.15);" title="全螢幕專注禪模式">🧘 禪模式</button>
+                        <button onclick="toggleZenMode()" style="background: rgba(255,255,255,0.15);">🧘 全螢幕</button>
                     </div>
 
-                    <div class="non-zen-hide" style="margin-top: 8px; display: flex; gap: 10px; align-items: center; font-size: 0.85rem;">
-                        <span>🎧 讀書背景音：</span>
+                    <div class="non-zen-hide" style="margin-top: 6px; display: flex; gap: 10px; align-items: center; font-size: 0.85rem;">
+                        <span>🎧 白噪音：</span>
                         <select id="bgSoundSelect" onchange="toggleAudioNoise()">
                             <option value="none">關閉</option>
-                            <option value="pink">粉紅專注音 (Pink Noise)</option>
+                            <option value="pink">粉紅噪音 (專注降噪)</option>
                         </select>
                     </div>
                 </div>
             </section>
 
-            <!-- 2. 今日學習任務 -->
+            <!-- 2. 今日任務 -->
             <section id="todo" class="view-section">
-                <div class="guide-banner" id="todoGuide">
-                    <span>💡 <strong>使用說明：</strong> 在此列出今天打算完成的讀書任務。完成後可勾選，或點擊「帶入番茄鐘」將該任務直接設定為計時器的專注目標！</span>
-                    <span class="close-btn" onclick="hideGuide('todoGuide')">✕</span>
-                </div>
-
                 <div class="glass-panel" style="padding: 20px;">
+                    <h3 style="margin-bottom: 12px;">✅ 今日待辦與研讀進度</h3>
                     <div style="display: flex; gap: 10px; margin-bottom: 16px;">
-                        <input type="text" id="todoInput" placeholder="新增今日研讀進度或待辦任務..." style="flex: 1;" onkeypress="if(event.key==='Enter') addTodoItem()">
-                        <button onclick="addTodoItem()">新增任務</button>
+                        <input type="text" id="todoInput" placeholder="新增待辦任務..." style="flex: 1;" onkeypress="if(event.key==='Enter') addTodoItem()">
+                        <button onclick="addTodoItem()">新增</button>
                     </div>
                     <div id="todoListContainer"></div>
                 </div>
             </section>
 
-            <!-- 3. 筆記庫 (實時自動儲存) -->
+            <!-- 3. 讀書筆記 -->
             <section id="notes" class="view-section">
-                <div class="guide-banner" id="noteGuide">
-                    <span>💡 <strong>使用說明：</strong> 所有打字與修改均為<b>即時自動儲存</b>。可點擊「插入主動回想塊」，用 ❓ 與 💡 寫下問題與答案，系統會自動在下方生成折疊測驗卡，並發送到閃卡庫中！</span>
-                    <span class="close-btn" onclick="hideGuide('noteGuide')">✕</span>
-                </div>
-
                 <div class="note-workspace">
-                    <!-- 左側筆記列表 -->
                     <div class="glass-panel note-sidebar">
-                        <button onclick="createNewNote()" style="width: 100%;">+ 新增讀書筆記</button>
-                        <input type="text" id="searchNoteInput" placeholder="🔍 搜尋筆記標題/內文..." style="margin-top: 8px;" oninput="renderNoteList()">
-                        <div id="noteListContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;"></div>
+                        <button onclick="createNewNote()" style="width: 100%;">+ 新增筆記</button>
+                        <input type="text" id="searchNoteInput" placeholder="🔍 搜尋筆記..." oninput="renderNoteList()">
+                        <div id="noteListContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
                     </div>
 
-                    <!-- 右側編輯器 -->
                     <div class="glass-panel note-editor-panel">
                         <div style="display: flex; gap: 10px; align-items: center;">
                             <input type="text" id="noteTitleInput" placeholder="筆記標題..." style="flex: 1; font-size: 1.1rem; font-weight: bold;" oninput="onNoteAutoSave()">
@@ -584,34 +529,30 @@
                             <button onclick="deleteCurrentNote()" style="background: #f87171;">刪除</button>
                         </div>
 
-                        <div style="display: flex; gap: 8px; margin: 4px 0; flex-wrap: wrap;">
-                            <button onclick="insertModule('recall')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">+ 插入主動回想測驗塊 (❓/💡)</button>
-                            <button onclick="insertModule('cornell')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">+ 康奈爾三欄模板</button>
+                        <div style="display: flex; gap: 8px; margin: 4px 0;">
+                            <button onclick="insertModule('recall')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">+ 插入問題解答塊 (❓/💡)</button>
                         </div>
 
-                        <textarea id="noteBodyInput" style="flex: 1; resize: none; min-height: 220px; line-height: 1.6;" placeholder="在此輸入讀書筆記內容，文字修改會『即時自動儲存』至本地..." oninput="onNoteAutoSave()"></textarea>
+                        <textarea id="noteBodyInput" style="flex: 1; resize: none; min-height: 200px; line-height: 1.6;" placeholder="在此輸入筆記內容，文字會自動即時儲存..." oninput="onNoteAutoSave()"></textarea>
 
-                        <!-- 預覽/互動區域 -->
                         <div style="border-top: 1px solid var(--glass-border); padding-top: 10px;">
-                            <h4 style="margin-bottom: 8px; color: var(--text-sub);">📖 筆記實時互動視圖 (包含自主測驗折疊塊)</h4>
+                            <h4 style="margin-bottom: 8px; color: var(--text-sub);">📖 預覽與展開測試</h4>
                             <div id="notePreviewRender" style="line-height: 1.6;"></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 4. 閃卡記憶卡片 -->
+            <!-- 4. 抽考閃卡 -->
             <section id="cards" class="view-section">
-                <div class="guide-banner" id="cardGuide">
-                    <span>💡 <strong>使用說明：</strong> 這裡會自動抓取你在筆記中寫下的「❓/💡 主動回想塊」[cite: 2]！點擊卡片即可翻面查看答案，隨時隨地進行課後自主抽考。</span>
-                    <span class="close-btn" onclick="hideGuide('cardGuide')">✕</span>
-                </div>
-
                 <div class="glass-panel" style="padding: 24px; text-align: center;">
+                    <h3>🎴 筆記自動抽考閃卡</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">只要在筆記中使用「❓ [問題] / 💡 答案」格式，系統會自動生成閃卡。</p>
+                    
                     <div class="flashcard-container">
                         <div class="flashcard" onclick="flipFlashcard()" id="flashcardBox">
-                            <span id="flashcardTag" style="font-size:0.85rem; color:var(--accent); margin-bottom:8px;">點擊翻牌</span>
-                            <div id="flashcardContent" style="font-size: 1.2rem; font-weight: bold; line-height: 1.5;">目前沒有閃卡題目</div>
+                            <span id="flashcardTag" style="font-size:0.85rem; color:var(--accent); margin-bottom:8px;">點擊翻面</span>
+                            <div id="flashcardContent" style="font-size: 1.2rem; font-weight: bold; line-height: 1.5;">目前無閃卡內容</div>
                         </div>
                     </div>
 
@@ -622,42 +563,42 @@
                 </div>
             </section>
 
-            <!-- 5. 數據統計 -->
+            <!-- 5. 學習統計 -->
             <section id="dashboard" class="view-section">
-                <h2>📊 讀數數據與歷史日誌</h2>
+                <h2>📊 學習時長與數據</h2>
                 <div class="metrics-grid">
                     <div class="glass-panel metric-card">
-                        <span style="color:var(--text-sub); font-size:0.85rem;">今日累積讀書</span>
+                        <span style="color:var(--text-sub); font-size:0.85rem;">今日專注</span>
                         <div class="metric-num" id="metricToday">0 分鐘</div>
                     </div>
                     <div class="glass-panel metric-card">
-                        <span style="color:var(--text-sub); font-size:0.85rem;">總計專注時長</span>
+                        <span style="color:var(--text-sub); font-size:0.85rem;">總累積時長</span>
                         <div class="metric-num" id="metricTotal">0 小時</div>
                     </div>
                     <div class="glass-panel metric-card">
-                        <span style="color:var(--text-sub); font-size:0.85rem;">讀書筆記總數</span>
+                        <span style="color:var(--text-sub); font-size:0.85rem;">筆記篇數</span>
                         <div class="metric-num" id="metricNotesCount">0 篇</div>
                     </div>
                 </div>
 
                 <div class="glass-panel" style="padding: 20px;">
-                    <h3>各科目讀書時間配比 (根據你的自訂科目)</h3>
-                    <div style="height: 240px; position: relative;">
+                    <h3>各科目時間分配</h3>
+                    <div style="height: 240px; position: relative; margin-top: 10px;">
                         <canvas id="analyticsChart"></canvas>
                     </div>
                 </div>
 
                 <div class="glass-panel" style="padding: 20px;">
-                    <h3>詳細專注日誌</h3>
+                    <h3>專注日誌</h3>
                     <div style="overflow-x: auto; margin-top: 10px;">
                         <table class="history-table">
                             <thead>
                                 <tr>
                                     <th>日期</th>
                                     <th>科目</th>
-                                    <th>專注時長</th>
+                                    <th>時長</th>
                                     <th>時段</th>
-                                    <th>讀書目標 / 備註</th>
+                                    <th>目標/備註</th>
                                 </tr>
                             </thead>
                             <tbody id="historyTableBody"></tbody>
@@ -666,75 +607,72 @@
                 </div>
             </section>
 
-            <!-- 6. 完全客製化偏好設定 -->
+            <!-- 6. 軟體偏好與設定 -->
             <section id="custom" class="view-section">
-                <h2>📚 科目管理與客製化偏好 (Customization)</h2>
+                <h2>⚙️ 軟體偏好與客製化設定</h2>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
-                    <!-- 自訂讀書科目核心區塊 -->
+                    
+                    <!-- 密碼鎖設定 -->
                     <div class="glass-panel" style="padding: 20px;">
-                        <h3>📚 自自主客製讀書科目</h3>
-                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">你想讀什麼科系、檢定或主題，通通自己決定！</p>
+                        <h3>🔒 每次開啟網站密碼保護</h3>
+                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，每次關閉或重新整理網頁都需要解鎖。</p>
                         
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" id="newSubjectInput" placeholder="輸入新科目名稱 (如: 微積分, 日文, 證照)..." style="flex: 1;">
-                            <button onclick="addNewSubject()">新增科目</button>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <input type="password" id="setNewPasswordInput" placeholder="設定新密碼 (留空代表取消密碼)">
+                            <button onclick="savePasswordSetting()">儲存密碼設定</button>
                         </div>
-
-                        <ul id="subjectManageList" style="margin-top: 14px; list-style: none; display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto;"></ul>
                     </div>
 
-                    <!-- 番茄鐘時間客製化 -->
+                    <!-- 科目管理 -->
                     <div class="glass-panel" style="padding: 20px;">
-                        <h3>⏱️ 客製化番茄鐘時長</h3>
-                        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px;">
+                        <h3>📚 讀書科目管理</h3>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <input type="text" id="newSubjectInput" placeholder="輸入新增科目..." style="flex: 1;">
+                            <button onclick="addNewSubject()">新增</button>
+                        </div>
+                        <ul id="subjectManageList" style="margin-top: 14px; list-style: none; display: flex; flex-direction: column; gap: 8px; max-height: 160px; overflow-y: auto;"></ul>
+                    </div>
+
+                    <!-- 番茄鐘時間設定 -->
+                    <div class="glass-panel" style="padding: 20px;">
+                        <h3>⏱️ 番茄鐘專注與休息時間</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                             <div>
-                                <label style="font-size:0.85rem; color: var(--text-sub);">單次專注分鐘數:</label>
+                                <label style="font-size:0.85rem; color: var(--text-sub);">專注時間 (分鐘):</label>
                                 <input type="number" id="focusTimeInput" value="25" min="1" style="width: 100%;">
                             </div>
                             <div>
-                                <label style="font-size:0.85rem; color: var(--text-sub);">單次休息分鐘數:</label>
+                                <label style="font-size:0.85rem; color: var(--text-sub);">休息時間 (分鐘):</label>
                                 <input type="number" id="breakTimeInput" value="5" min="1" style="width: 100%;">
                             </div>
-                            <button onclick="saveTimerPreferences()">儲存時長偏好</button>
+                            <button onclick="saveTimerPreferences()">儲存時間設定</button>
                         </div>
                     </div>
 
-                    <!-- 主題與視覺客製化 -->
+                    <!-- 主題風格 -->
                     <div class="glass-panel" style="padding: 20px;">
-                        <h3>🎨 主題風格與視覺客製化</h3>
-                        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px;">
-                            <div>
-                                <label style="font-size:0.85rem; color: var(--text-sub);">背景主題風格：</label>
-                                <select id="themeSelect" onchange="applyThemeSetting(this.value)">
-                                    <option value="morandi">莫蘭迪夜空 (Morandi Night)</option>
-                                    <option value="emerald">護眼極光綠 (Aurora Emerald)</option>
-                                    <option value="sunset">暖陽落日 (Sunset Warmth)</option>
-                                    <option value="dark">純黑極簡 (True OLED Black)</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label style="font-size:0.85rem; color: var(--text-sub);">毛玻璃模糊度 (Blur):</label>
-                                <input type="range" min="5" max="40" id="glassBlurRange" oninput="applyBlurSetting(this.value)" style="width:100%;">
-                            </div>
-
-                            <div>
-                                <label style="font-size:0.85rem; color: var(--text-sub);">卡片圓角 (Border Radius):</label>
-                                <input type="range" min="4" max="32" id="radiusRange" oninput="applyRadiusSetting(this.value)" style="width:100%;">
-                            </div>
+                        <h3>🎨 色彩風格</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                            <select id="themeSelect" onchange="applyThemeSetting(this.value)">
+                                <option value="morandi">深夜藍 (Default Morandi)</option>
+                                <option value="emerald">護眼綠 (Aurora Emerald)</option>
+                                <option value="sunset">暖夕陽 (Warm Sunset)</option>
+                                <option value="dark">極簡黑 (OLED Black)</option>
+                            </select>
                         </div>
                     </div>
 
                     <!-- 資料備份 -->
                     <div class="glass-panel" style="padding: 20px;">
-                        <h3>💾 資料備份與跨設備轉移</h3>
-                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">匯出你的所有讀書筆記與歷史紀錄，以便在其他電腦上匯入。</p>
+                        <h3>💾 資料備份與轉移</h3>
+                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">可將所有筆記與紀錄導出備份。</p>
                         <div style="display: flex; gap: 8px;">
-                            <button onclick="exportJSONBackup()" style="background: rgba(255,255,255,0.15); flex:1;">匯出備份 JSON</button>
-                            <button onclick="importJSONBackup()" style="background: rgba(255,255,255,0.15); flex:1;">匯入 JSON</button>
+                            <button onclick="exportJSONBackup()" style="background: rgba(255,255,255,0.15); flex:1;">匯出備份</button>
+                            <button onclick="importJSONBackup()" style="background: rgba(255,255,255,0.15); flex:1;">匯入備份</button>
                         </div>
                     </div>
+
                 </div>
             </section>
         </main>
@@ -746,38 +684,34 @@
         <div class="mobile-nav-btn" onclick="switchNavTabMobile('todo', this)"><span>✅</span>待辦</div>
         <div class="mobile-nav-btn" onclick="switchNavTabMobile('notes', this)"><span>📁</span>筆記</div>
         <div class="mobile-nav-btn" onclick="switchNavTabMobile('cards', this)"><span>🎴</span>閃卡</div>
-        <div class="mobile-nav-btn" onclick="switchNavTabMobile('dashboard', this)"><span>📊</span>數據</div>
+        <div class="mobile-nav-btn" onclick="switchNavTabMobile('dashboard', this)"><span>📊</span>統計</div>
     </nav>
 
     <script>
-        // 本地全域狀態 state (科目完全開放客製化，預設提供通用範例)
+        // 本地全域狀態 State
         let appState = {
-            subjects: JSON.parse(localStorage.getItem('aura_subjects')) || ["自主專題研究", "核心專業科目", "語言學習"],
+            password: localStorage.getItem('aura_password') || '',
+            subjects: JSON.parse(localStorage.getItem('aura_subjects')) || ["國文", "英文", "數學", "專業科目"],
             focusMins: parseInt(localStorage.getItem('aura_focusMins')) || 25,
             breakMins: parseInt(localStorage.getItem('aura_breakMins')) || 5,
             sessions: JSON.parse(localStorage.getItem('aura_sessions')) || [],
             todos: JSON.parse(localStorage.getItem('aura_todos')) || [
-                { id: 't1', text: '點擊『客製科目』建立屬於你自己的讀書科目！', completed: false }
+                { id: 't1', text: '歡迎使用讀書軟體！可在今日任務寫下學習目標。', completed: false }
             ],
             notes: JSON.parse(localStorage.getItem('aura_notes')) || [
                 { 
                     id: 'default_1', 
-                    title: '📖 你的第一篇客製化筆記', 
-                    subject: '自主專題研究', 
-                    content: '歡迎使用 AuraStudy！你在這裡打的任何字都會【實時自動儲存】。\n\n❓ [試著點擊這行展開問題答案？]\n💡 答案：只要在筆記內輸入 ❓ [問題] 與 💡 答案，就能自動生成閃卡！', 
+                    title: '📖 第一篇讀書筆記', 
+                    subject: '國文', 
+                    content: '在這裡打字會自動儲存。\n\n❓ [點擊可以展開問題？]\n💡 答案：只要輸入 ❓ [問題] 與 💡 答案，即可自動產生閃卡！', 
                     updatedAt: new Date().toLocaleString() 
                 }
             ],
             settings: JSON.parse(localStorage.getItem('aura_settings')) || {
-                theme: 'morandi',
-                blur: '20',
-                radius: '20',
-                font: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-                fontSize: '16px'
+                theme: 'morandi'
             }
         };
 
-        // 計時器 state
         let timerId = null;
         let isRunning = false;
         let isBreakMode = false;
@@ -785,18 +719,20 @@
         let sessionStartTime = null;
         let activeNoteId = appState.notes[0]?.id || null;
 
-        // 閃卡 state
         let flashcardList = [];
         let currentCardIndex = 0;
         let isCardFlipped = false;
 
-        // 音訊 state
         let audioCtx = null;
         let noiseSource = null;
 
         window.onload = function() {
-            document.getElementById('privacyNoticeModal').style.display = 'flex';
-            applyAllSavedCustomizations();
+            // 檢查是否需顯示密碼解鎖畫面
+            if (appState.password) {
+                document.getElementById('lockScreen').style.display = 'flex';
+            }
+
+            applyThemeSetting(appState.settings.theme, false);
             renderSubjectDropdowns();
             renderSubjectManageList();
             renderTodoList();
@@ -807,12 +743,21 @@
             extractFlashcards();
         };
 
-        function closeNoticeModal() {
-            document.getElementById('privacyNoticeModal').style.display = 'none';
+        /* 密碼檢查機制 */
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === appState.password) {
+                document.getElementById('lockScreen').style.display = 'none';
+            } else {
+                document.getElementById('lockMsg').innerText = '密碼不正確，請重新輸入';
+            }
         }
 
-        function hideGuide(guideId) {
-            document.getElementById(guideId).style.display = 'none';
+        function savePasswordSetting() {
+            const newPwd = document.getElementById('setNewPasswordInput').value.trim();
+            appState.password = newPwd;
+            localStorage.setItem('aura_password', newPwd);
+            alert(newPwd ? '已成功設定解鎖密碼！' : '已取消密碼保護！');
         }
 
         /* 導覽切換 */
@@ -836,20 +781,7 @@
             if(tabId === 'cards') extractFlashcards();
         }
 
-        /* 客製化樣式與載入 */
-        function applyAllSavedCustomizations() {
-            const s = appState.settings;
-            applyThemeSetting(s.theme, false);
-            applyBlurSetting(s.blur, false);
-            applyRadiusSetting(s.radius, false);
-
-            document.getElementById('themeSelect').value = s.theme;
-            document.getElementById('glassBlurRange').value = s.blur;
-            document.getElementById('radiusRange').value = s.radius;
-            document.getElementById('focusTimeInput').value = appState.focusMins;
-            document.getElementById('breakTimeInput').value = appState.breakMins;
-        }
-
+        /* 主題切換 */
         function applyThemeSetting(val, save=true) {
             const root = document.documentElement;
             if(val === 'morandi') {
@@ -865,24 +797,13 @@
                 root.style.setProperty('--bg-main', '#000000');
                 root.style.setProperty('--accent', '#a855f7');
             }
-            if(save) { appState.settings.theme = val; saveSettingsToStorage(); }
+            if(save) { 
+                appState.settings.theme = val; 
+                localStorage.setItem('aura_settings', JSON.stringify(appState.settings));
+            }
         }
 
-        function applyBlurSetting(val, save=true) {
-            document.documentElement.style.setProperty('--glass-blur', val + 'px');
-            if(save) { appState.settings.blur = val; saveSettingsToStorage(); }
-        }
-
-        function applyRadiusSetting(val, save=true) {
-            document.documentElement.style.setProperty('--card-radius', val + 'px');
-            if(save) { appState.settings.radius = val; saveSettingsToStorage(); }
-        }
-
-        function saveSettingsToStorage() {
-            localStorage.setItem('aura_settings', JSON.stringify(appState.settings));
-        }
-
-        /* 核心：完全自主客製化科目管理 */
+        /* 科目管理與快捷新增 */
         function renderSubjectDropdowns() {
             const tSel = document.getElementById('timerSubjectDropdown');
             const nSel = document.getElementById('noteSubjectDropdown');
@@ -893,13 +814,25 @@
             });
         }
 
+        function addQuickSubject() {
+            const val = document.getElementById('customSubjectQuickInput').value.trim();
+            if(val && !appState.subjects.includes(val)) {
+                appState.subjects.push(val);
+                localStorage.setItem('aura_subjects', JSON.stringify(appState.subjects));
+                renderSubjectDropdowns();
+                renderSubjectManageList();
+                document.getElementById('timerSubjectDropdown').value = val;
+                document.getElementById('customSubjectQuickInput').value = '';
+            }
+        }
+
         function renderSubjectManageList() {
             const ul = document.getElementById('subjectManageList');
             ul.innerHTML = '';
             appState.subjects.forEach((sub, idx) => {
                 ul.innerHTML += `
                     <li style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px;">
-                        <span style="font-weight: bold;">📚 ${sub}</span>
+                        <span>📚 ${sub}</span>
                         <button onclick="removeSubject(${idx})" style="background:#f87171; padding:4px 10px; font-size:0.75rem;">刪除</button>
                     </li>
                 `;
@@ -914,7 +847,6 @@
                 document.getElementById('newSubjectInput').value = '';
                 renderSubjectDropdowns();
                 renderSubjectManageList();
-                showAutoSaveIndicator();
             }
         }
 
@@ -926,7 +858,7 @@
             renderSubjectManageList();
         }
 
-        /* 待辦事項 Todo 功能 */
+        /* 待辦清單 Todo */
         function renderTodoList() {
             const container = document.getElementById('todoListContainer');
             container.innerHTML = '';
@@ -935,7 +867,7 @@
                     <div class="todo-item ${todo.completed ? 'completed' : ''}">
                         <input type="checkbox" ${todo.completed ? 'checked' : ''} onchange="toggleTodo('${todo.id}')">
                         <span style="flex: 1;">${todo.text}</span>
-                        <button onclick="bindTodoToTimer('${todo.text}')" style="font-size:0.75rem; background:rgba(255,255,255,0.15);">帶入番茄鐘</button>
+                        <button onclick="bindTodoToTimer('${todo.text}')" style="font-size:0.75rem; background:rgba(255,255,255,0.15);">帶入計時</button>
                         <button onclick="deleteTodo('${todo.id}')" style="font-size:0.75rem; background:#f87171;">刪除</button>
                     </div>
                 `;
@@ -950,7 +882,6 @@
             input.value = '';
             localStorage.setItem('aura_todos', JSON.stringify(appState.todos));
             renderTodoList();
-            showAutoSaveIndicator();
         }
 
         function toggleTodo(id) {
@@ -982,16 +913,14 @@
                 localStorage.setItem('aura_focusMins', f);
                 localStorage.setItem('aura_breakMins', b);
                 resetTimer();
-                alert('番茄鐘客製化時長已儲存！');
+                alert('時間設定已更新！');
             }
         }
 
-        /* 筆記系統：實時自動儲存 (Auto-Save) */
+        /* 筆記系統 Auto-Save */
         let autoSaveTimer = null;
         function onNoteAutoSave() {
-            showAutoSaveIndicator();
             if(autoSaveTimer) clearTimeout(autoSaveTimer);
-
             autoSaveTimer = setTimeout(() => {
                 const note = appState.notes.find(n => n.id === activeNoteId);
                 if(note) {
@@ -1007,17 +936,11 @@
             }, 300);
         }
 
-        function showAutoSaveIndicator() {
-            const ind = document.getElementById('autoSaveIndicator');
-            ind.classList.add('show');
-            setTimeout(() => ind.classList.remove('show'), 1500);
-        }
-
         function createNewNote() {
             const newNote = {
                 id: 'note_' + Date.now(),
-                title: '全新客製筆記',
-                subject: appState.subjects[0] || '預設',
+                title: '全新筆記',
+                subject: appState.subjects[0] || '國文',
                 content: '',
                 updatedAt: new Date().toLocaleString()
             };
@@ -1058,7 +981,7 @@
                     container.innerHTML += `
                         <div class="note-card-item ${activeCls}" onclick="switchActiveNote('${n.id}')">
                             <strong style="font-size:0.9rem;">${n.title}</strong>
-                            <span style="font-size:0.75rem; color:var(--text-sub);">${n.subject} • ${n.updatedAt}</span>
+                            <div style="font-size:0.75rem; color:var(--text-sub); margin-top: 4px;">${n.subject} • ${n.updatedAt}</div>
                         </div>
                     `;
                 });
@@ -1073,9 +996,7 @@
         function insertModule(type) {
             const input = document.getElementById('noteBodyInput');
             if(type === 'recall') {
-                input.value += `\n❓ [在這裡輸入問題或測驗題目？]\n💡 答案：(在此輸入詳細解答，下方自動生成折疊塊)\n`;
-            } else if(type === 'cornell') {
-                input.value += `\n【關鍵字/問題線索】:\n\n【主要研讀筆記】:\n\n【本頁總結 Summary】:\n`;
+                input.value += `\n❓ [在這裡輸入問題？]\n💡 答案：在此輸入詳細解答\n`;
             }
             onNoteAutoSave();
         }
@@ -1121,17 +1042,17 @@
             const tag = document.getElementById('flashcardTag');
             const content = document.getElementById('flashcardContent');
             if(flashcardList.length === 0) {
-                tag.innerText = "💡 系統提示";
-                content.innerText = "目前筆記中無閃卡題目！請在筆記中插入『主動回想塊 (❓/💡)』。";
+                tag.innerText = "提示";
+                content.innerText = "筆記中目前沒有閃卡題目！";
                 return;
             }
 
             const card = flashcardList[currentCardIndex];
             if(isCardFlipped) {
-                tag.innerText = `💡 解答答案 (${card.subject}) - 點擊翻回問題`;
+                tag.innerText = `💡 解答 (${card.subject}) - 點擊翻回問題`;
                 content.innerText = card.answer;
             } else {
-                tag.innerText = `❓ 測驗題目 (${currentCardIndex + 1}/${flashcardList.length}) [${card.subject}] - 點擊看答案`;
+                tag.innerText = `❓ 問題 (${currentCardIndex + 1}/${flashcardList.length}) [${card.subject}] - 點擊看答案`;
                 content.innerText = card.question;
             }
         }
@@ -1156,7 +1077,7 @@
             renderFlashcard();
         }
 
-        /* 計時器邏輯與靜心禪模式 */
+        /* 計時器邏輯 */
         function updateTimerDisplay() {
             let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
             let s = (timeLeft % 60).toString().padStart(2, '0');
@@ -1204,7 +1125,7 @@
         function onTimerComplete() {
             const endTime = new Date();
             const subject = document.getElementById('timerSubjectDropdown').value;
-            const tag = document.getElementById('sessionTagInput').value || '一般讀書';
+            const tag = document.getElementById('sessionTagInput').value || '一般研讀';
 
             if(!isBreakMode) {
                 const rec = {
@@ -1219,19 +1140,19 @@
                 appState.sessions.push(rec);
                 localStorage.setItem('aura_sessions', JSON.stringify(appState.sessions));
 
-                alert(`🎉 太棒了！完成了 [${subject}] 的專注讀書！自動開啟休息模式。`);
+                alert(`🎉 完成了 [${subject}] 的專注學習！進入休息時間。`);
 
                 isBreakMode = true;
                 timeLeft = appState.breakMins * 60;
                 document.getElementById('timerModeTag').innerText = "☕ 休息時間";
                 toggleTimer();
             } else {
-                alert(`🔔 休息時間結束！準備進行下一輪讀書專注吧。`);
+                alert(`🔔 休息時間結束！繼續下一輪專注。`);
                 resetTimer();
             }
         }
 
-        /* 粉紅專注音 */
+        /* 白噪音 */
         function toggleAudioNoise() {
             const type = document.getElementById('bgSoundSelect').value;
             if(type === 'pink') {
@@ -1266,7 +1187,7 @@
             }
         }
 
-        /* 統計 DashBoard */
+        /* 學習統計 DashBoard */
         function renderDashboard() {
             const todayStr = new Date().toLocaleDateString();
             const todayMins = appState.sessions.filter(s => s.date === todayStr).reduce((a, b) => a + b.duration, 0);
@@ -1319,13 +1240,13 @@
             });
         }
 
-        /* 匯出與匯入 JSON 備份 */
+        /* 備份與匯入 */
         function exportJSONBackup() {
             const blob = new Blob([JSON.stringify(appState, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `AuraStudy_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `讀書軟體_備份_${new Date().toISOString().slice(0,10)}.json`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -1342,6 +1263,7 @@
                         const imported = JSON.parse(ev.target.result);
                         if(imported.notes && imported.sessions) {
                             appState = imported;
+                            localStorage.setItem('aura_password', appState.password || '');
                             localStorage.setItem('aura_subjects', JSON.stringify(appState.subjects));
                             localStorage.setItem('aura_focusMins', appState.focusMins);
                             localStorage.setItem('aura_breakMins', appState.breakMins);
@@ -1351,7 +1273,7 @@
                             localStorage.setItem('aura_settings', JSON.stringify(appState.settings));
                             location.reload();
                         }
-                    } catch(err) { alert('備份檔案格式無效！'); }
+                    } catch(err) { alert('備份檔案無效！'); }
                 };
             };
             input.click();
