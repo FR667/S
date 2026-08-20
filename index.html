@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>讀書軟體 - 臥室音樂輕量整合版</title>
+    <title>讀書軟體 - 全功能完整終極整合版</title>
     <!-- Chart.js 數據視覺化 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- CryptoJS 安全雜湊演算法 -->
@@ -127,6 +127,7 @@
             padding: 16px;
             gap: 16px;
             box-sizing: border-box;
+            overflow: hidden;
         }
 
         /* 側邊欄 Sidebar / 手機抽屜 Drawer */
@@ -138,6 +139,7 @@
             gap: 14px;
             flex-shrink: 0;
             transition: transform 0.3s ease-in-out;
+            overflow-y: auto;
         }
 
         .brand-header {
@@ -221,6 +223,7 @@
             height: 100%;
             overflow-y: auto;
             padding-right: 4px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .view-section {
@@ -264,52 +267,37 @@
 
         button:active { transform: scale(0.97); }
 
-        /* 頂部今日讀書統計與目標看板 */
-        .today-top-banner {
-            width: 100%;
-            max-width: 500px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 14px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.03);
-        }
-
-        .banner-stats-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #34d399, #818cf8);
-            border-radius: 5px;
-            transition: width 0.4s ease;
-        }
-
         /* 計時器面板 */
         .timer-wrapper {
-            padding: 30px 20px;
+            padding: 35px 20px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 18px;
             position: relative;
+        }
+
+        .mode-switch-container {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            padding: 4px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            gap: 4px;
+        }
+
+        .mode-btn {
+            background: transparent;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+
+        .mode-btn.active {
+            background: var(--accent);
+            color: white;
         }
 
         .timer-status-badge {
@@ -323,7 +311,7 @@
         }
 
         .timer-text {
-            font-size: clamp(2.8rem, 10vw, 6rem);
+            font-size: clamp(3rem, 11vw, 6.5rem);
             font-weight: 800;
             font-family: 'Courier New', Courier, monospace;
             letter-spacing: 2px;
@@ -341,19 +329,21 @@
 
         .timer-btn-group {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             width: 100%;
-            max-width: 360px;
+            max-width: 380px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .timer-btn-group button {
             flex: 1;
+            min-width: 100px;
             padding: 12px 0;
             font-size: 1rem;
         }
 
-        /* 輕量音樂組件 */
+        /* 臥室音樂控制模組 */
         .bedroom-audio-box {
             width: 100%;
             max-width: 450px;
@@ -408,7 +398,7 @@
             display: grid;
             grid-template-columns: 260px 1fr;
             gap: 16px;
-            height: calc(100vh - 80px);
+            min-height: calc(100vh - 80px);
         }
 
         .note-sidebar, .note-editor-panel {
@@ -416,7 +406,6 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            overflow-y: auto;
         }
 
         .note-card-item {
@@ -507,21 +496,27 @@
         /* 數據圖表與統計 */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
         }
 
         .metric-card {
-            padding: 20px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
 
         .metric-num {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 800;
             color: #a7f3d0;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
         }
 
         .history-table {
@@ -539,46 +534,7 @@
 
         .history-table th { color: var(--text-sub); }
 
-        .analysis-box {
-            background: rgba(0,0,0,0.25);
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            border: 1px solid var(--glass-border);
-            margin-top: 10px;
-        }
-
-        /* 使用教學樣式 */
-        .guide-step {
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 12px;
-        }
-
-        .guide-step:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
-
-        .guide-step h4 {
-            color: var(--accent);
-            margin-bottom: 6px;
-        }
-
-        .guide-step p, .guide-step li {
-            font-size: 0.88rem;
-            color: var(--text-sub);
-            line-height: 1.5;
-        }
-
-        .guide-step ul {
-            padding-left: 20px;
-            margin-top: 4px;
-        }
-
-        /* ===== 手機端抽屜選單與直向螢幕適配 ===== */
+        /* ===== 手機端直向（RWD）優化 ===== */
         @media (max-width: 768px) {
             body {
                 height: 100vh;
@@ -597,6 +553,7 @@
                 padding: 10px; 
                 height: calc(100vh - 56px);
                 flex-direction: column;
+                overflow: hidden;
             }
 
             aside {
@@ -622,30 +579,35 @@
             main {
                 height: 100%;
                 padding-right: 0;
+                overflow-y: auto;
             }
 
             .view-section {
-                padding-bottom: 20px;
+                padding-bottom: 30px;
             }
 
             .note-workspace {
                 grid-template-columns: 1fr;
                 height: auto;
-                min-height: 100%;
             }
 
             .note-sidebar { 
-                max-height: 160px; 
+                max-height: 180px; 
                 overflow-y: auto;
             }
 
             .note-editor-panel {
-                min-height: 380px;
+                min-height: 400px;
             }
 
             .subject-input-group select,
             .subject-input-group input {
                 width: 100% !important;
+            }
+
+            .timer-btn-group button {
+                padding: 10px 0;
+                font-size: 0.9rem;
             }
 
             .history-table th, .history-table td {
@@ -703,8 +665,8 @@
                 <li class="nav-item" onclick="switchNavTab('todo', this)">✅ 今日任務</li>
                 <li class="nav-item" onclick="switchNavTab('notes', this)">📁 讀書筆記</li>
                 <li class="nav-item" onclick="switchNavTab('cards', this)">🎴 抽考閃卡</li>
-                <li class="nav-item" onclick="switchNavTab('dashboard', this)">📊 學習統計</li>
-                <li class="nav-item" onclick="switchNavTab('custom', this)">⚙️ 軟體偏好與密碼</li>
+                <li class="nav-item" onclick="switchNavTab('dashboard', this)">📊 學習統計分析</li>
+                <li class="nav-item" onclick="switchNavTab('custom', this)">⚙️ 偏好與設定</li>
             </ul>
         </aside>
 
@@ -713,23 +675,10 @@
             <!-- 1. 專注計時器 -->
             <section id="timer" class="view-section active">
                 <div class="glass-panel timer-wrapper">
-                    
-                    <!-- 頂部今日累計與目標看板 -->
-                    <div class="non-zen-hide today-top-banner">
-                        <div class="banner-stats-row">
-                            <span style="font-size: 0.88rem; color: var(--text-sub);">📖 今日累計讀書時間：</span>
-                            <strong id="topTodayAccumulated" style="font-size: 1.1rem; color: #a7f3d0; font-family: monospace;">00小時00分00秒</strong>
-                        </div>
-                        <div class="banner-stats-row">
-                            <span style="font-size: 0.88rem; color: var(--text-sub);">🎯 今日研讀目標：</span>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <strong id="topDailyGoalDisplay" style="font-size: 0.95rem; color: #f8fafc;">2.0 小時</strong>
-                                <button onclick="quickSetDailyGoal()" style="padding: 2px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.15);">修改</button>
-                            </div>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="topGoalProgressBar"></div>
-                        </div>
+                    <!-- 計時模式切換鈕 -->
+                    <div class="non-zen-hide mode-switch-container">
+                        <button class="mode-btn active" id="modePomodoroBtn" onclick="switchTimerMode('pomodoro')">⏳ 番茄鐘 (倒數)</button>
+                        <button class="mode-btn" id="modeStopwatchBtn" onclick="switchTimerMode('stopwatch')">⏱️ 正向計時</button>
                     </div>
 
                     <span class="timer-status-badge" id="timerModeTag">🎯 專注模式</span>
@@ -740,7 +689,7 @@
                         <input type="text" id="customSubjectQuickInput" placeholder="或自訂新科目..." style="width: 130px;" onkeypress="if(event.key==='Enter') addQuickSubject()">
                     </div>
 
-                    <div class="timer-text" id="timerDisplay">00:25:00</div>
+                    <div class="timer-text" id="timerDisplay">25:00</div>
 
                     <div class="non-zen-hide" style="width: 100%; max-width: 360px;">
                         <input type="text" id="sessionTagInput" placeholder="寫下當前目標（例如：算完第三章...）" style="width: 100%; text-align: center;">
@@ -748,11 +697,12 @@
 
                     <div class="timer-btn-group">
                         <button id="startTimerBtn" onclick="toggleTimer()">開始專注</button>
+                        <button id="stopwatchSaveBtn" onclick="stopAndSaveStopwatch()" style="display:none; background:#10b981;">結束並記錄</button>
                         <button onclick="resetTimer()" style="background: rgba(255,255,255,0.15);">重設</button>
                         <button onclick="toggleZenMode()" style="background: rgba(255,255,255,0.15);">🧘 全螢幕</button>
                     </div>
 
-                    <!-- 輕量臥室音樂 & 環境音控制面板 -->
+                    <!-- 卧室音樂與環境音完整控制面板 -->
                     <div class="non-zen-hide bedroom-audio-box">
                         <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between; font-size: 0.85rem;">
                             <span style="font-weight: bold; color: var(--accent);">🎵 臥室輕量音樂/環境音：</span>
@@ -772,16 +722,12 @@
                             <button id="audioPlayPauseBtn" onclick="toggleAudioPlay()" style="padding: 6px 12px; font-size: 0.8rem; display: none;">▶️ 播放</button>
                         </div>
 
-                        <!-- 隱藏的本地檔案與網址輸入框 -->
                         <div id="customUrlInputContainer" style="display: none; width: 100%;">
                             <input type="text" id="audioUrlInput" placeholder="貼上 MP3/音訊網址並回車..." style="width: 100%; font-size: 0.8rem;" onkeypress="if(event.key==='Enter') loadCustomAudioUrl()">
                         </div>
                         <input type="file" id="audioFileInput" accept="audio/*" style="display: none;" onchange="loadCustomAudioFile(event)">
-                        
-                        <!-- 原生隱藏 audio 元素 -->
                         <audio id="bedroomAudioPlayer" loop style="display: none;"></audio>
                     </div>
-
                 </div>
             </section>
 
@@ -807,8 +753,8 @@
                     </div>
 
                     <div class="glass-panel note-editor-panel">
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="text" id="noteTitleInput" placeholder="筆記標題..." style="flex: 1; font-size: 1.1rem; font-weight: bold;" oninput="onNoteAutoSave()">
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <input type="text" id="noteTitleInput" placeholder="筆記標題..." style="flex: 1; font-size: 1.1rem; font-weight: bold; min-width: 150px;" oninput="onNoteAutoSave()">
                             <select id="noteSubjectDropdown" onchange="onNoteAutoSave()"></select>
                             <button onclick="deleteCurrentNote()" style="background: #f87171;">刪除</button>
                         </div>
@@ -849,45 +795,54 @@
                 </div>
             </section>
 
-            <!-- 5. 學習統計與詳細分析 -->
+            <!-- 5. 學習統計分析 -->
             <section id="dashboard" class="view-section">
-                <h2>📊 學習時長與詳細分析</h2>
+                <h2>📊 詳細學習數據分析</h2>
+                
                 <div class="metrics-grid">
                     <div class="glass-panel metric-card">
                         <span style="color:var(--text-sub); font-size:0.85rem;">今日專注</span>
-                        <div class="metric-num" id="metricToday">00小時00分00秒</div>
-                    </div>
-                    <div class="glass-panel metric-card">
-                        <span style="color:var(--text-sub); font-size:0.85rem;">今日目標達成率</span>
-                        <div class="metric-num" id="metricGoalRate">0%</div>
+                        <div class="metric-num" id="metricToday">0 分鐘</div>
                     </div>
                     <div class="glass-panel metric-card">
                         <span style="color:var(--text-sub); font-size:0.85rem;">總累積時長</span>
                         <div class="metric-num" id="metricTotal">0 小時</div>
                     </div>
                     <div class="glass-panel metric-card">
-                        <span style="color:var(--text-sub); font-size:0.85rem;">筆記篇數</span>
-                        <div class="metric-num" id="metricNotesCount">0 篇</div>
+                        <span style="color:var(--text-sub); font-size:0.85rem;">單次平均專注</span>
+                        <div class="metric-num" id="metricAvgSession">0 分鐘</div>
+                    </div>
+                    <div class="glass-panel metric-card">
+                        <span style="color:var(--text-sub); font-size:0.85rem;">最常研讀科目</span>
+                        <div class="metric-num" id="metricTopSubject" style="font-size: 1.2rem; color: #818cf8;">-</div>
                     </div>
                 </div>
 
-                <!-- 詳細分析報告 -->
-                <div class="glass-panel" style="padding: 20px;">
-                    <h3>📈 深度專注診斷報告</h3>
-                    <div class="analysis-box" id="detailedAnalysisContent">
-                        分析計算中...
+                <div class="charts-container">
+                    <div class="glass-panel" style="padding: 20px;">
+                        <h3>📚 各科目時間分配</h3>
+                        <div style="height: 220px; position: relative; margin-top: 10px;">
+                            <canvas id="subjectDoughnutChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel" style="padding: 20px;">
+                        <h3>📅 近7日研讀趨勢 (分鐘)</h3>
+                        <div style="height: 220px; position: relative; margin-top: 10px;">
+                            <canvas id="weeklyBarChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
                 <div class="glass-panel" style="padding: 20px;">
-                    <h3>各科目時間分配</h3>
-                    <div style="height: 240px; position: relative; margin-top: 10px;">
-                        <canvas id="analyticsChart"></canvas>
+                    <h3>🕒 研讀時段偏好分析</h3>
+                    <div style="height: 200px; position: relative; margin-top: 10px;">
+                        <canvas id="timeSlotChart"></canvas>
                     </div>
                 </div>
 
                 <div class="glass-panel" style="padding: 20px;">
-                    <h3>專注日誌</h3>
+                    <h3>📖 專注日誌紀錄</h3>
                     <div style="overflow-x: auto; margin-top: 10px;">
                         <table class="history-table">
                             <thead>
@@ -895,6 +850,7 @@
                                     <th>日期</th>
                                     <th>科目</th>
                                     <th>時長</th>
+                                    <th>模式</th>
                                     <th>時段</th>
                                     <th>目標/備註</th>
                                 </tr>
@@ -905,21 +861,11 @@
                 </div>
             </section>
 
-            <!-- 6. 軟體偏好與設定 -->
+            <!-- 6. 偏好與設定 -->
             <section id="custom" class="view-section">
                 <h2>⚙️ 軟體偏好與客製化設定</h2>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
-
-                    <!-- 今日目標設定 -->
-                    <div class="glass-panel" style="padding: 20px;">
-                        <h3>🎯 今日讀書目標設定</h3>
-                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定每天預計達成的總讀書時長（小時）。</p>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="number" id="dailyGoalInput" step="0.5" min="0.5" value="2.0" style="flex:1;">
-                            <button onclick="saveDailyGoalSetting()">儲存目標</button>
-                        </div>
-                    </div>
 
                     <!-- 考試倒數設定 -->
                     <div class="glass-panel" style="padding: 20px;">
@@ -934,7 +880,7 @@
                     <!-- 密碼鎖設定 -->
                     <div class="glass-panel" style="padding: 20px;">
                         <h3>🔒 密碼保護</h3>
-                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，開啟網頁需解鎖（SHA-256 加密存儲）。</p>
+                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，開啟網頁需解鎖。</p>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <input type="password" id="setNewPasswordInput" placeholder="設定新密碼 (留空取消)">
                             <button onclick="savePasswordSetting()">儲存密碼設定</button>
@@ -953,7 +899,7 @@
 
                     <!-- 番茄鐘時間設定 -->
                     <div class="glass-panel" style="padding: 20px;">
-                        <h3>⏱️ 番茄鐘時間設定</h3>
+                        <h3>⏱️ 番茄鐘預設時間設定</h3>
                         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                             <div>
                                 <label style="font-size:0.85rem; color: var(--text-sub);">專注時間 (分鐘):</label>
@@ -991,45 +937,6 @@
                     </div>
 
                 </div>
-
-                <!-- 軟體詳細使用教學 -->
-                <div class="glass-panel" style="padding: 24px; margin-top: 20px;">
-                    <h3 style="margin-bottom: 14px; color: var(--accent);">📖 軟體詳細使用教學與說明</h3>
-                    
-                    <div class="guide-step">
-                        <h4>1. ⏱️ 讀書計時器與目標追蹤</h4>
-                        <p>本軟體採用高精度毫秒級校正計時，即使切換分頁或手機螢幕暫時關閉也不會產生時間偏差。</p>
-                        <ul>
-                            <li><strong>頂部看板</strong>：即時計算並顯示您「今日累計讀書時間」與「每日目標進度條」。</li>
-                            <li><strong>幾小時幾分幾秒顯示</strong>：顯示格式為 <code>HH:MM:SS</code>，精確掌握每分每秒。</li>
-                            <li><strong>全螢幕專注 (Zen Mode)</strong>：點擊「🧘 全螢幕」可隱藏所有雜訊介面，專心備考。</li>
-                        </ul>
-                    </div>
-
-                    <div class="guide-step">
-                        <h4>2. 🎵 臥室輕量音樂與降噪</h4>
-                        <p>內建專注音訊模組，協助阻隔環境噪音：</p>
-                        <ul>
-                            <li><strong>粉紅降噪 (Pink Noise)</strong>：由 Web Audio API 即時運算生成的均勻聲波，能遮蔽突兀環境音。</li>
-                            <li><strong>線上與本地音樂</strong>：可輸入線上 MP3 網址，或是直接選取手機/電腦內的音樂檔進行播放。</li>
-                        </ul>
-                    </div>
-
-                    <div class="guide-step">
-                        <h4>3. 📁 筆記與 🎴 雙向自動閃卡</h4>
-                        <p>支援邊讀書邊建立筆記，並自動抽考重點：</p>
-                        <ul>
-                            <li>在筆記中使用格式：<code>❓ [問題內容]</code> 與下一行的 <code>💡 答案內容</code>。</li>
-                            <li>系統會自動解析您所有筆記中的問答對，並於「抽考閃卡」區塊自動生成練習卡片。</li>
-                        </ul>
-                    </div>
-
-                    <div class="guide-step">
-                        <h4>4. 📊 詳細數據診斷與備份</h4>
-                        <p>「學習統計」會依照您的歷史專注紀錄，自動生成研讀時段分析與科目佔比圖表。資料皆儲存於本地瀏覽器，可透過設定區的「匯出備份」下載完整的 JSON 檔案備份。</p>
-                    </div>
-                </div>
-
             </section>
         </main>
     </div>
@@ -1040,7 +947,6 @@
             subjects: JSON.parse(localStorage.getItem('aura_subjects')) || ["國文", "英文", "數學", "專業科目"],
             focusMins: parseInt(localStorage.getItem('aura_focusMins')) || 25,
             breakMins: parseInt(localStorage.getItem('aura_breakMins')) || 5,
-            dailyGoalHours: parseFloat(localStorage.getItem('aura_dailyGoalHours')) || 2.0,
             sessions: JSON.parse(localStorage.getItem('aura_sessions')) || [],
             todos: JSON.parse(localStorage.getItem('aura_todos')) || [
                 { id: 't1', text: '歡迎使用讀書軟體！點擊「帶入計時」開啟任務。', completed: false }
@@ -1063,14 +969,12 @@
             }
         };
 
-        /* 計時器核心高精度變數 */
+        let timerMode = 'pomodoro'; // 'pomodoro' 或 'stopwatch'
         let timerId = null;
         let isRunning = false;
         let isBreakMode = false;
-        let totalTimeSeconds = appState.focusMins * 60; // 總時長(秒)
-        let remainingSeconds = totalTimeSeconds;      // 剩餘(秒)
-        let startTimeStamp = null;                      // 開始戳
-        let expectedEndStamp = null;                   // 預計結束戳
+        let timeLeft = appState.focusMins * 60; // 番茄鐘秒數
+        let stopwatchSeconds = 0;             // 正向計時秒數
         let sessionStartTime = null;
         let activeNoteId = appState.notes[0]?.id || null;
 
@@ -1078,11 +982,15 @@
         let currentCardIndex = 0;
         let isCardFlipped = false;
 
-        /* 音訊管理變數 */
+        /* 音樂與環境音變數 */
         let audioCtx = null;
         let noiseSource = null;
         let gainNode = null;
-        const player = document.getElementById('bedroomAudioPlayer');
+
+        /* Chart 圖表實例 */
+        let chartDoughnut = null;
+        let chartWeekly = null;
+        let chartTimeSlot = null;
 
         window.onload = function() {
             if (appState.passwordHash) {
@@ -1095,15 +1003,13 @@
             renderTodoList();
             renderNoteList();
             loadActiveNoteToEditor();
-            resetTimer(); // 初始化時間顯示
+            updateTimerDisplay();
             renderDashboard();
             extractFlashcards();
             updateExamCountdown();
-            updateTopDailyDisplay();
 
             document.getElementById('examNameInput').value = appState.exam.name || '';
             document.getElementById('examDateInput').value = appState.exam.date || '';
-            document.getElementById('dailyGoalInput').value = appState.dailyGoalHours;
         };
 
         function toggleDrawer(open) {
@@ -1161,29 +1067,6 @@
                 alert('已成功設定加密密碼！');
             }
             document.getElementById('setNewPasswordInput').value = '';
-        }
-
-        function saveDailyGoalSetting() {
-            const val = parseFloat(document.getElementById('dailyGoalInput').value);
-            if(!isNaN(val) && val > 0) {
-                appState.dailyGoalHours = val;
-                localStorage.setItem('aura_dailyGoalHours', val);
-                updateTopDailyDisplay();
-                alert('今日目標已儲存！');
-            }
-        }
-
-        function quickSetDailyGoal() {
-            const input = prompt("請輸入今日研讀目標（小時）：", appState.dailyGoalHours);
-            if (input !== null) {
-                const val = parseFloat(input);
-                if (!isNaN(val) && val > 0) {
-                    appState.dailyGoalHours = val;
-                    localStorage.setItem('aura_dailyGoalHours', val);
-                    document.getElementById('dailyGoalInput').value = val;
-                    updateTopDailyDisplay();
-                }
-            }
         }
 
         function saveExamSetting() {
@@ -1337,220 +1220,27 @@
             }
         }
 
-        let autoSaveTimer = null;
-        function onNoteAutoSave() {
-            if(autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => {
-                const note = appState.notes.find(n => n.id === activeNoteId);
-                if(note) {
-                    note.title = document.getElementById('noteTitleInput').value.trim() || '無標題筆記';
-                    note.subject = document.getElementById('noteSubjectDropdown').value;
-                    note.content = document.getElementById('noteBodyInput').value;
-                    note.updatedAt = new Date().toLocaleString();
-
-                    localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
-                    renderNoteList();
-                    renderNotePreview();
-                }
-            }, 300);
-        }
-
-        function createNewNote() {
-            const newNote = {
-                id: 'note_' + Date.now(),
-                title: '全新筆記',
-                subject: appState.subjects[0] || '國文',
-                content: '',
-                updatedAt: new Date().toLocaleString()
-            };
-            appState.notes.unshift(newNote);
-            activeNoteId = newNote.id;
-            localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
-            renderNoteList();
-            loadActiveNoteToEditor();
-        }
-
-        function deleteCurrentNote() {
-            if(appState.notes.length <= 1) return alert('請至少留存一篇筆記！');
-            appState.notes = appState.notes.filter(n => n.id !== activeNoteId);
-            activeNoteId = appState.notes[0].id;
-            localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
-            renderNoteList();
-            loadActiveNoteToEditor();
-        }
-
-        function loadActiveNoteToEditor() {
-            const note = appState.notes.find(n => n.id === activeNoteId);
-            if(!note) return;
-            document.getElementById('noteTitleInput').value = note.title;
-            document.getElementById('noteSubjectDropdown').value = note.subject;
-            document.getElementById('noteBodyInput').value = note.content;
-            renderNotePreview();
-        }
-
-        function renderNoteList() {
-            const container = document.getElementById('noteListContainer');
-            const searchVal = (document.getElementById('searchNoteInput')?.value || '').toLowerCase();
-            container.innerHTML = '';
-            
-            appState.notes
-                .filter(n => n.title.toLowerCase().includes(searchVal) || n.content.toLowerCase().includes(searchVal))
-                .forEach(n => {
-                    const activeCls = n.id === activeNoteId ? 'active' : '';
-                    container.innerHTML += `
-                        <div class="note-card-item ${activeCls}" onclick="switchActiveNote('${n.id}')">
-                            <strong style="font-size:0.9rem;">${n.title}</strong>
-                            <div style="font-size:0.75rem; color:var(--text-sub); margin-top: 4px;">${n.subject} • ${n.updatedAt}</div>
-                        </div>
-                    `;
-                });
-        }
-
-        function switchActiveNote(id) {
-            activeNoteId = id;
-            renderNoteList();
-            loadActiveNoteToEditor();
-        }
-
-        function insertModule(type) {
-            const input = document.getElementById('noteBodyInput');
-            if(type === 'recall') {
-                input.value += `\n❓ [在這裡輸入問題？]\n💡 答案：在此輸入詳細解答\n`;
-            } else if(type === 'bold') {
-                input.value += ` **粗體文字** `;
-            } else if(type === 'header') {
-                input.value += `\n### 標題名稱\n`;
+        /* ===== 計時模式切換核心 ===== */
+        function switchTimerMode(mode) {
+            if(isRunning) {
+                if(!confirm('計時仍在進行中，切換模式將會重置當前計時，確定切換？')) return;
             }
-            onNoteAutoSave();
-        }
-
-        function renderNotePreview() {
-            const raw = document.getElementById('noteBodyInput').value;
-            const container = document.getElementById('notePreviewRender');
-            
-            let formatted = raw
-                .replace(/❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g, (match, q, a) => {
-                    return `
-                        <div class="active-recall-block">
-                            <div class="recall-question" onclick="toggleRecallAns(this)">❓ ${q} <span>▼</span></div>
-                            <div class="recall-answer">💡 ${a}</div>
-                        </div>
-                    `;
-                })
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/^### (.*$)/gim, '<h3 style="margin:8px 0; color:var(--accent);">$1</h3>');
-
-            container.innerHTML = formatted.replace(/\n/g, '<br>');
-        }
-
-        function toggleRecallAns(el) {
-            const ans = el.nextElementSibling;
-            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function extractFlashcards() {
-            flashcardList = [];
-            const regex = /❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g;
-            appState.notes.forEach(note => {
-                let match;
-                while ((match = regex.exec(note.content)) !== null) {
-                    flashcardList.push({ question: match[1], answer: match[2], subject: note.subject });
-                }
-            });
-
-            currentCardIndex = 0;
-            isCardFlipped = false;
-            renderFlashcard();
-        }
-
-        function renderFlashcard() {
-            const tag = document.getElementById('flashcardTag');
-            const content = document.getElementById('flashcardContent');
-            if(flashcardList.length === 0) {
-                tag.innerText = "提示";
-                content.innerText = "筆記中目前沒有閃卡題目！";
-                return;
-            }
-
-            const card = flashcardList[currentCardIndex];
-            if(isCardFlipped) {
-                tag.innerText = `💡 解答 (${card.subject}) - 點擊翻回問題`;
-                content.innerText = card.answer;
-            } else {
-                tag.innerText = `❓ 問題 (${currentCardIndex + 1}/${flashcardList.length}) [${card.subject}] - 點擊看答案`;
-                content.innerText = card.question;
-            }
-        }
-
-        function flipFlashcard() {
-            if(flashcardList.length === 0) return;
-            isCardFlipped = !isCardFlipped;
-            renderFlashcard();
-        }
-
-        function nextFlashcard() {
-            if(flashcardList.length === 0) return;
-            currentCardIndex = (currentCardIndex + 1) % flashcardList.length;
-            isCardFlipped = false;
-            renderFlashcard();
-        }
-
-        function prevFlashcard() {
-            if(flashcardList.length === 0) return;
-            currentCardIndex = (currentCardIndex - 1 + flashcardList.length) % flashcardList.length;
-            isCardFlipped = false;
-            renderFlashcard();
-        }
-
-        /* ===== 時間輔助與格式化工具 (幾小時幾分幾秒) ===== */
-        function formatSecondsToHMS(seconds) {
-            let h = Math.floor(seconds / 3600);
-            let m = Math.floor((seconds % 3600) / 60);
-            let s = seconds % 60;
-            
-            let hStr = h.toString().padStart(2, '0');
-            let mStr = m.toString().padStart(2, '0');
-            let sStr = s.toString().padStart(2, '0');
-            return `${hStr}:${mStr}:${sStr}`;
-        }
-
-        function formatSecondsToChinese(seconds) {
-            let h = Math.floor(seconds / 3600);
-            let m = Math.floor((seconds % 3600) / 60);
-            let s = seconds % 60;
-            
-            let hStr = h.toString().padStart(2, '0');
-            let mStr = m.toString().padStart(2, '0');
-            let sStr = s.toString().padStart(2, '0');
-            return `${hStr}小時${mStr}分${sStr}秒`;
-        }
-
-        /* 算今日歷史紀錄總秒數 */
-        function getTodayAccumulatedSeconds() {
-            const todayStr = new Date().toLocaleDateString();
-            return appState.sessions
-                .filter(s => s.date === todayStr)
-                .reduce((acc, curr) => acc + (curr.duration * 60), 0);
-        }
-
-        /* 更新頂部看板今日累計與目標進度條 */
-        function updateTopDailyDisplay() {
-            const todaySecs = getTodayAccumulatedSeconds();
-            document.getElementById('topTodayAccumulated').innerText = formatSecondsToChinese(todaySecs);
-            
-            const goalHours = appState.dailyGoalHours || 2.0;
-            document.getElementById('topDailyGoalDisplay').innerText = `${goalHours.toFixed(1)} 小時`;
-
-            const goalSecs = goalHours * 3600;
-            const percentage = Math.min(100, Math.round((todaySecs / goalSecs) * 100));
-            document.getElementById('topGoalProgressBar').style.width = `${percentage}%`;
+            resetTimer();
+            timerMode = mode;
+            document.getElementById('modePomodoroBtn').classList.toggle('active', mode === 'pomodoro');
+            document.getElementById('modeStopwatchBtn').classList.toggle('active', mode === 'stopwatch');
+            document.getElementById('stopwatchSaveBtn').style.display = mode === 'stopwatch' ? 'inline-block' : 'none';
+            document.getElementById('timerModeTag').innerText = mode === 'pomodoro' ? "🎯 專注模式" : "⏱️ 正向計時模式";
+            updateTimerDisplay();
         }
 
         function updateTimerDisplay() {
-            document.getElementById('timerDisplay').innerText = formatSecondsToHMS(remainingSeconds);
+            let totalSecs = (timerMode === 'pomodoro') ? timeLeft : stopwatchSeconds;
+            let m = Math.floor(totalSecs / 60).toString().padStart(2, '0');
+            let s = (totalSecs % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
         }
 
-        /* 高精度時間戳計時器核心邏輯 */
         function toggleTimer() {
             const btn = document.getElementById('startTimerBtn');
             if(!isRunning) {
@@ -1558,23 +1248,20 @@
                 btn.innerText = "暫停";
                 if(!sessionStartTime) sessionStartTime = new Date();
 
-                const now = Date.now();
-                expectedEndStamp = now + (remainingSeconds * 1000);
-
                 timerId = setInterval(() => {
-                    const currentNow = Date.now();
-                    const diffSecs = Math.round((expectedEndStamp - currentNow) / 1000);
-
-                    if(diffSecs > 0) {
-                        remainingSeconds = diffSecs;
-                        updateTimerDisplay();
+                    if(timerMode === 'pomodoro') {
+                        if(timeLeft > 0) {
+                            timeLeft--;
+                            updateTimerDisplay();
+                        } else {
+                            clearInterval(timerId);
+                            onTimerComplete();
+                        }
                     } else {
-                        remainingSeconds = 0;
+                        stopwatchSeconds++;
                         updateTimerDisplay();
-                        clearInterval(timerId);
-                        onTimerComplete();
                     }
-                }, 200); // 頻率200ms提高響應平滑度
+                }, 1000);
             } else {
                 isRunning = false;
                 btn.innerText = "繼續";
@@ -1582,16 +1269,41 @@
             }
         }
 
+        function stopAndSaveStopwatch() {
+            if(stopwatchSeconds < 10) return alert('計時時間過短（少於10秒），未進行儲存。');
+            
+            clearInterval(timerId);
+            isRunning = false;
+            const endTime = new Date();
+            const subject = document.getElementById('timerSubjectDropdown').value;
+            const tag = document.getElementById('sessionTagInput').value || '正向自主研讀';
+            const durationMins = Math.round(stopwatchSeconds / 60) || 1;
+
+            const rec = {
+                id: Date.now(),
+                subject,
+                duration: durationMins,
+                mode: '正向計時',
+                startTime: sessionStartTime ? sessionStartTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '',
+                endTime: endTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                date: new Date().toLocaleDateString(),
+                tag
+            };
+            appState.sessions.push(rec);
+            localStorage.setItem('aura_sessions', JSON.stringify(appState.sessions));
+
+            alert(`🎉 完成專注！已記錄 [${subject}] 共 ${durationMins} 分鐘。`);
+            resetTimer();
+        }
+
         function resetTimer() {
             clearInterval(timerId);
             isRunning = false;
             isBreakMode = false;
             sessionStartTime = null;
-            
-            totalTimeSeconds = appState.focusMins * 60;
-            remainingSeconds = totalTimeSeconds;
-
-            document.getElementById('timerModeTag').innerText = "🎯 專注模式";
+            timeLeft = appState.focusMins * 60;
+            stopwatchSeconds = 0;
+            document.getElementById('timerModeTag').innerText = timerMode === 'pomodoro' ? "🎯 專注模式" : "⏱️ 正向計時模式";
             document.getElementById('startTimerBtn').innerText = "開始專注";
             updateTimerDisplay();
         }
@@ -1610,21 +1322,19 @@
                     id: Date.now(),
                     subject,
                     duration: appState.focusMins,
+                    mode: '番茄鐘',
                     startTime: sessionStartTime ? sessionStartTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '',
                     endTime: endTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
                     date: new Date().toLocaleDateString(),
-                    hourOfDay: sessionStartTime ? sessionStartTime.getHours() : new Date().getHours(),
                     tag
                 };
                 appState.sessions.push(rec);
                 localStorage.setItem('aura_sessions', JSON.stringify(appState.sessions));
 
-                updateTopDailyDisplay();
                 alert(`🎉 完成了 [${subject}] 的專注學習！進入休息時間。`);
 
                 isBreakMode = true;
-                totalTimeSeconds = appState.breakMins * 60;
-                remainingSeconds = totalTimeSeconds;
+                timeLeft = appState.breakMins * 60;
                 document.getElementById('timerModeTag').innerText = "☕ 休息時間";
                 toggleTimer();
             } else {
@@ -1633,7 +1343,7 @@
             }
         }
 
-        /* ===== 輕量化臥室音樂 & 環境音核心邏輯 ===== */
+        /* ===== 臥室音樂與環境音完整系統 ===== */
         function stopAllAudio() {
             if(noiseSource) {
                 try { noiseSource.stop(); noiseSource.disconnect(); } catch(e){}
@@ -1745,19 +1455,195 @@
             }
         }
 
-        /* ===== 詳細學習數據分析模組 ===== */
-        function renderDashboard() {
-            const todaySecs = getTodayAccumulatedSeconds();
-            const totalMins = appState.sessions.reduce((a, b) => a + b.duration, 0);
-            
-            const goalHours = appState.dailyGoalHours || 2.0;
-            const goalSecs = goalHours * 3600;
-            const goalRate = Math.min(100, Math.round((todaySecs / goalSecs) * 100));
+        /* ===== 筆記模組核心 ===== */
+        let autoSaveTimer = null;
+        function onNoteAutoSave() {
+            if(autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                const note = appState.notes.find(n => n.id === activeNoteId);
+                if(note) {
+                    note.title = document.getElementById('noteTitleInput').value.trim() || '無標題筆記';
+                    note.subject = document.getElementById('noteSubjectDropdown').value;
+                    note.content = document.getElementById('noteBodyInput').value;
+                    note.updatedAt = new Date().toLocaleString();
 
-            document.getElementById('metricToday').innerText = formatSecondsToChinese(todaySecs);
-            document.getElementById('metricGoalRate').innerText = `${goalRate}%`;
+                    localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
+                    renderNoteList();
+                    renderNotePreview();
+                }
+            }, 300);
+        }
+
+        function createNewNote() {
+            const newNote = {
+                id: 'note_' + Date.now(),
+                title: '全新筆記',
+                subject: appState.subjects[0] || '國文',
+                content: '',
+                updatedAt: new Date().toLocaleString()
+            };
+            appState.notes.unshift(newNote);
+            activeNoteId = newNote.id;
+            localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
+            renderNoteList();
+            loadActiveNoteToEditor();
+        }
+
+        function deleteCurrentNote() {
+            if(appState.notes.length <= 1) return alert('請至少留存一篇筆記！');
+            appState.notes = appState.notes.filter(n => n.id !== activeNoteId);
+            activeNoteId = appState.notes[0].id;
+            localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
+            renderNoteList();
+            loadActiveNoteToEditor();
+        }
+
+        function loadActiveNoteToEditor() {
+            const note = appState.notes.find(n => n.id === activeNoteId);
+            if(!note) return;
+            document.getElementById('noteTitleInput').value = note.title;
+            document.getElementById('noteSubjectDropdown').value = note.subject;
+            document.getElementById('noteBodyInput').value = note.content;
+            renderNotePreview();
+        }
+
+        function renderNoteList() {
+            const container = document.getElementById('noteListContainer');
+            const searchVal = (document.getElementById('searchNoteInput')?.value || '').toLowerCase();
+            container.innerHTML = '';
+            
+            appState.notes
+                .filter(n => n.title.toLowerCase().includes(searchVal) || n.content.toLowerCase().includes(searchVal))
+                .forEach(n => {
+                    const activeCls = n.id === activeNoteId ? 'active' : '';
+                    container.innerHTML += `
+                        <div class="note-card-item ${activeCls}" onclick="switchActiveNote('${n.id}')">
+                            <strong style="font-size:0.9rem;">${n.title}</strong>
+                            <div style="font-size:0.75rem; color:var(--text-sub); margin-top: 4px;">${n.subject} • ${n.updatedAt}</div>
+                        </div>
+                    `;
+                });
+        }
+
+        function switchActiveNote(id) {
+            activeNoteId = id;
+            renderNoteList();
+            loadActiveNoteToEditor();
+        }
+
+        function insertModule(type) {
+            const input = document.getElementById('noteBodyInput');
+            if(type === 'recall') {
+                input.value += `\n❓ [在這裡輸入問題？]\n💡 答案：在此輸入詳細解答\n`;
+            } else if(type === 'bold') {
+                input.value += ` **粗體文字** `;
+            } else if(type === 'header') {
+                input.value += `\n### 標題名稱\n`;
+            }
+            onNoteAutoSave();
+        }
+
+        function renderNotePreview() {
+            const raw = document.getElementById('noteBodyInput').value;
+            const container = document.getElementById('notePreviewRender');
+            
+            let formatted = raw
+                .replace(/❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g, (match, q, a) => {
+                    return `
+                        <div class="active-recall-block">
+                            <div class="recall-question" onclick="toggleRecallAns(this)">❓ ${q} <span>▼</span></div>
+                            <div class="recall-answer">💡 ${a}</div>
+                        </div>
+                    `;
+                })
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^### (.*$)/gim, '<h3 style="margin:8px 0; color:var(--accent);">$1</h3>');
+
+            container.innerHTML = formatted.replace(/\n/g, '<br>');
+        }
+
+        function toggleRecallAns(el) {
+            const ans = el.nextElementSibling;
+            ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+        }
+
+        /* ===== 閃卡模組 ===== */
+        function extractFlashcards() {
+            flashcardList = [];
+            const regex = /❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g;
+            appState.notes.forEach(note => {
+                let match;
+                while ((match = regex.exec(note.content)) !== null) {
+                    flashcardList.push({ question: match[1], answer: match[2], subject: note.subject });
+                }
+            });
+
+            currentCardIndex = 0;
+            isCardFlipped = false;
+            renderFlashcard();
+        }
+
+        function renderFlashcard() {
+            const tag = document.getElementById('flashcardTag');
+            const content = document.getElementById('flashcardContent');
+            if(flashcardList.length === 0) {
+                tag.innerText = "提示";
+                content.innerText = "筆記中目前沒有閃卡題目！";
+                return;
+            }
+
+            const card = flashcardList[currentCardIndex];
+            if(isCardFlipped) {
+                tag.innerText = `💡 解答 (${card.subject}) - 點擊翻回問題`;
+                content.innerText = card.answer;
+            } else {
+                tag.innerText = `❓ 問題 (${currentCardIndex + 1}/${flashcardList.length}) [${card.subject}] - 點擊看答案`;
+                content.innerText = card.question;
+            }
+        }
+
+        function flipFlashcard() {
+            if(flashcardList.length === 0) return;
+            isCardFlipped = !isCardFlipped;
+            renderFlashcard();
+        }
+
+        function nextFlashcard() {
+            if(flashcardList.length === 0) return;
+            currentCardIndex = (currentCardIndex + 1) % flashcardList.length;
+            isCardFlipped = false;
+            renderFlashcard();
+        }
+
+        function prevFlashcard() {
+            if(flashcardList.length === 0) return;
+            currentCardIndex = (currentCardIndex - 1 + flashcardList.length) % flashcardList.length;
+            isCardFlipped = false;
+            renderFlashcard();
+        }
+
+        /* ===== 統計分析與數據圖表 (完整整合) ===== */
+        function renderDashboard() {
+            const todayStr = new Date().toLocaleDateString();
+            const todayMins = appState.sessions.filter(s => s.date === todayStr).reduce((a, b) => a + b.duration, 0);
+            const totalMins = appState.sessions.reduce((a, b) => a + b.duration, 0);
+            const avgMins = appState.sessions.length > 0 ? Math.round(totalMins / appState.sessions.length) : 0;
+
+            const subjectMap = {};
+            appState.sessions.forEach(s => subjectMap[s.subject] = (subjectMap[s.subject] || 0) + s.duration);
+            let topSub = '-';
+            let maxMins = 0;
+            for(let sub in subjectMap) {
+                if(subjectMap[sub] > maxMins) {
+                    maxMins = subjectMap[sub];
+                    topSub = sub;
+                }
+            }
+
+            document.getElementById('metricToday').innerText = `${todayMins} 分鐘`;
             document.getElementById('metricTotal').innerText = `${(totalMins / 60).toFixed(1)} 小時`;
-            document.getElementById('metricNotesCount').innerText = `${appState.notes.length} 篇`;
+            document.getElementById('metricAvgSession').innerText = `${avgMins} 分鐘`;
+            document.getElementById('metricTopSubject').innerText = topSub;
 
             const tbody = document.getElementById('historyTableBody');
             tbody.innerHTML = '';
@@ -1767,100 +1653,125 @@
                         <td>${s.date}</td>
                         <td><strong>${s.subject}</strong></td>
                         <td>${s.duration} 分鐘</td>
-                        <td>${s.startTime} ~ ${s.endTime}</td>
+                        <td><span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-size:0.8rem;">${s.mode || '番茄鐘'}</span></td>
+                        <td>${s.startTime || '-'} ~ ${s.endTime || '-'}</td>
                         <td style="color:var(--text-sub);">${s.tag}</td>
                     </tr>
                 `;
             });
 
-            generateDetailedAnalysis();
-            renderChart();
+            renderCharts(subjectMap);
         }
 
-        function generateDetailedAnalysis() {
-            const container = document.getElementById('detailedAnalysisContent');
-            if(appState.sessions.length === 0) {
-                container.innerHTML = "📌 尚無足夠的研讀數據，請完成幾次專注計時後查看詳細分析。";
-                return;
+        function renderCharts(subjectMap) {
+            if(typeof Chart === 'undefined') return;
+
+            // 1. 各科目比例圓餅圖
+            const ctxD = document.getElementById('subjectDoughnutChart');
+            if(ctxD) {
+                if(chartDoughnut) chartDoughnut.destroy();
+                chartDoughnut = new Chart(ctxD, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(subjectMap),
+                        datasets: [{
+                            data: Object.values(subjectMap),
+                            backgroundColor: ['#818cf8', '#34d399', '#fbbf24', '#f472b6', '#38bdf8', '#c084fc']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#f8fafc' } } } }
+                });
             }
 
-            // 1. 各科目時間彙整
-            const subjectMap = {};
-            // 2. 時段分析 (早/中/晚/夜)
-            const timeSlots = { morning: 0, afternoon: 0, evening: 0, night: 0 };
-
-            appState.sessions.forEach(s => {
-                subjectMap[s.subject] = (subjectMap[s.subject] || 0) + s.duration;
-                
-                const hour = s.hourOfDay !== undefined ? s.hourOfDay : 12;
-                if(hour >= 6 && hour < 12) timeSlots.morning += s.duration;
-                else if(hour >= 12 && hour < 18) timeSlots.afternoon += s.duration;
-                else if(hour >= 18 && hour < 24) timeSlots.evening += s.duration;
-                else timeSlots.night += s.duration;
-            });
-
-            // 找出最常讀的科目
-            let topSubject = "";
-            let maxSubMins = 0;
-            for(let sub in subjectMap) {
-                if(subjectMap[sub] > maxSubMins) {
-                    maxSubMins = subjectMap[sub];
-                    topSubject = sub;
+            // 2. 近 7 日趨勢長條圖
+            const ctxW = document.getElementById('weeklyBarChart');
+            if(ctxW) {
+                const last7Days = [];
+                const last7Mins = [];
+                for(let i = 6; i >= 0; i--) {
+                    const d = new Date();
+                    d.setDate(d.getDate() - i);
+                    const dStr = d.toLocaleDateString();
+                    last7Days.push(`${d.getMonth()+1}/${d.getDate()}`);
+                    const dayMins = appState.sessions.filter(s => s.date === dStr).reduce((a, b) => a + b.duration, 0);
+                    last7Mins.push(dayMins);
                 }
+
+                if(chartWeekly) chartWeekly.destroy();
+                chartWeekly = new Chart(ctxW, {
+                    type: 'bar',
+                    data: {
+                        labels: last7Days,
+                        datasets: [{
+                            label: '研讀時長 (分)',
+                            data: last7Mins,
+                            backgroundColor: 'rgba(129, 140, 248, 0.7)',
+                            borderColor: '#818cf8',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { ticks: { color: '#cbd5e1' } },
+                            y: { ticks: { color: '#cbd5e1' }, beginAtZero: true }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
             }
 
-            // 找出最佳專注時段
-            let topSlot = "早晨";
-            let maxSlotMins = timeSlots.morning;
-            if(timeSlots.afternoon > maxSlotMins) { topSlot = "下午"; maxSlotMins = timeSlots.afternoon; }
-            if(timeSlots.evening > maxSlotMins) { topSlot = "傍晚/晚上"; maxSlotMins = timeSlots.evening; }
-            if(timeSlots.night > maxSlotMins) { topSlot = "深夜"; maxSlotMins = timeSlots.night; }
+            // 3. 時段偏好雷達圖/折線圖
+            const ctxT = document.getElementById('timeSlotChart');
+            if(ctxT) {
+                const slots = ['早晨 (06-12)', '下午 (12-18)', '晚上 (18-24)', '深夜 (00-06)'];
+                const slotCounts = [0, 0, 0, 0];
+                appState.sessions.forEach(s => {
+                    if(s.startTime) {
+                        const hour = parseInt(s.startTime.split(':')[0]);
+                        if(hour >= 6 && hour < 12) slotCounts[0] += s.duration;
+                        else if(hour >= 12 && hour < 18) slotCounts[1] += s.duration;
+                        else if(hour >= 18 && hour < 24) slotCounts[2] += s.duration;
+                        else slotCounts[3] += s.duration;
+                    }
+                });
 
-            const todaySecs = getTodayAccumulatedSeconds();
-            const goalSecs = (appState.dailyGoalHours || 2.0) * 3600;
-            const isGoalAchieved = todaySecs >= goalSecs;
-
-            container.innerHTML = `
-                <p>💡 <strong>今日目標進度：</strong> 您今日已累積讀書 <strong>${formatSecondsToChinese(todaySecs)}</strong>，目標達成率為 <strong>${Math.min(100, Math.round((todaySecs/goalSecs)*100))}%</strong>。${isGoalAchieved ? "🎉 恭喜您已達成今日設定目標！" : "💪 還差一點點，加油繼續保持！"}</p>
-                <br>
-                <p>📚 <strong>最核心研讀科目：</strong> 您的專注時間主要集中在 <span style="color: var(--accent); font-weight:bold;">${topSubject || "未定"}</span>（累積 ${maxSubMins} 分鐘）。建議適度調整各科比例，保持均衡發展。</p>
-                <br>
-                <p>⚡ <strong>黃金專注時段：</strong> 數據顯示您在 <span style="color: #34d399; font-weight:bold;">${topSlot}</span> 時段的學習效率最高（累積 ${maxSlotMins} 分鐘）。建議將最艱深的章節安排在這個黃金時間研讀！</p>
-            `;
+                if(chartTimeSlot) chartTimeSlot.destroy();
+                chartTimeSlot = new Chart(ctxT, {
+                    type: 'line',
+                    data: {
+                        labels: slots,
+                        datasets: [{
+                            label: '累積分鐘',
+                            data: slotCounts,
+                            fill: true,
+                            backgroundColor: 'rgba(52, 211, 153, 0.2)',
+                            borderColor: '#34d399',
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { ticks: { color: '#cbd5e1' } },
+                            y: { ticks: { color: '#cbd5e1' }, beginAtZero: true }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
         }
 
-        let chartObj = null;
-        function renderChart() {
-            const ctx = document.getElementById('analyticsChart');
-            if(!ctx || typeof Chart === 'undefined') return;
-
-            const map = {};
-            appState.sessions.forEach(s => map[s.subject] = (map[s.subject] || 0) + s.duration);
-
-            if(chartObj) chartObj.destroy();
-            chartObj = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(map),
-                    datasets: [{
-                        data: Object.values(map),
-                        backgroundColor: ['#818cf8', '#34d399', '#fbbf24', '#f472b6', '#38bdf8', '#c084fc']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#f8fafc' } } }
-                }
-            });
-        }
-
+        /* ===== 資料備份與轉移 ===== */
         function exportJSONBackup() {
             const blob = new Blob([JSON.stringify(appState, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `讀書軟體_備份_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `讀書軟體_完整備份_${new Date().toISOString().slice(0,10)}.json`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -1877,13 +1788,10 @@
                         const imported = JSON.parse(ev.target.result);
                         if(imported.notes && imported.sessions) {
                             appState = imported;
-                            if(appState.passwordHash) {
-                                localStorage.setItem('aura_password_hash', appState.passwordHash);
-                            }
+                            if(appState.passwordHash) localStorage.setItem('aura_password_hash', appState.passwordHash);
                             localStorage.setItem('aura_subjects', JSON.stringify(appState.subjects));
                             localStorage.setItem('aura_focusMins', appState.focusMins);
                             localStorage.setItem('aura_breakMins', appState.breakMins);
-                            localStorage.setItem('aura_dailyGoalHours', appState.dailyGoalHours || 2.0);
                             localStorage.setItem('aura_sessions', JSON.stringify(appState.sessions));
                             localStorage.setItem('aura_todos', JSON.stringify(appState.todos || []));
                             localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
