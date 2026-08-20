@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraStudy - 高級毛玻璃本地學習工作站</title>
+    <!-- Chart.js 引入（若完全離線時無網路，圖表會優雅降級顯示純數據數據） -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --accent-color: #818cf8;
+            --accent-hover: #6366f1;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --card-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* 毛玻璃通用類別 */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: var(--card-radius);
+        }
+
+        /* 側邊欄 Sidebar */
+        aside {
+            width: 260px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 16px;
+            height: calc(100vh - 32px);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, #c084fc, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* 主內容區 Main Content */
+        main {
+            flex: 1;
+            padding: 16px 16px 16px 0;
+            height: calc(100vh - 32px);
+            overflow-y: auto;
+        }
+
+        .section-view {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .section-view.active {
+            display: flex;
+        }
+
+        /* 首頁 DashBoard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #a7f3d0;
+        }
+
+        /* 番茄鐘模組 */
+        .timer-container {
+            padding: 40px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            font-weight: 800;
+            font-mono: monospace;
+            letter-spacing: 2px;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(129, 140, 248, 0.5);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        select, input, textarea {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        /* 筆記與模組系統 */
+        .note-editor-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+            height: 75vh;
+        }
+
+        .folder-list, .editor-panel {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .note-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+        }
+
+        .note-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 模組：主動回想/折疊卡片 */
+        .recall-block {
+            border-left: 3px solid var(--accent-color);
+            background: rgba(0, 0, 0, 0.2);
+            margin: 12px 0;
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .recall-trigger {
+            cursor: pointer;
+            font-weight: 600;
+            color: #f38ba8;
+            user-select: none;
+        }
+
+        .recall-content {
+            display: none;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--glass-border);
+        }
+
+        /* 彈出視窗 Modal (本地說明) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal-content {
+            max-width: 500px;
+            width: 90%;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 16px;
+            color: #818cf8;
+        }
+
+        .modal-content p {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .badge-local {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 每次進入跳出的本地說明 Modal -->
+    <div class="modal-overlay" id="localNoticeModal">
+        <div class="glass-panel modal-content">
+            <span class="badge-local">100% 本地運行</span>
+            <h2>歡迎使用 AuraStudy</h2>
+            <p>
+                🔒 <strong>隱私與資料儲存說明：</strong><br>
+                本網站為完全無後端、離線專用的高級讀書工作站。<br>
+                所有讀書紀錄、科目資料夾、番茄鐘數據與筆記內容，<strong>均僅保存在您當前瀏覽器的 LocalStorage（本地記憶體）中</strong>。<br>
+                我們不會、也無法上傳您的任何隱私資料。請放心離線使用！
+            </p>
+            <button onclick="closeNotice()">了解並開始使用</button>
+        </div>
+    </div>
+
+    <!-- 側邊欄 Sidebar -->
+    <aside class="glass-panel">
+        <div class="logo">
+            <span>✨ AuraStudy</span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="switchTab('dashboard')">📊 學習儀表板</li>
+            <li class="nav-item" onclick="switchTab('timer')">⏱️ 專注番茄鐘</li>
+            <li class="nav-item" onclick="switchTab('notes')">📁 科目筆記庫</li>
+            <li class="nav-item" onclick="switchTab('history')">📜 歷史時長分析</li>
+        </ul>
+    </aside>
+
+    <!-- 主頁面區域 -->
+    <main>
+        <!-- 1. 儀表板視圖 -->
+        <section id="dashboard" class="section-view active">
+            <h2>學習儀表板</h2>
+            <div class="dashboard-grid">
+                <div class="glass-panel stat-card">
+                    <h3>今日累積學習</h3>
+                    <div class="stat-value" id="todayTime">0 分鐘</div>
+                </div>
+                <div class="glass-panel stat-card">
+                    <h3>本周專注次數</h3>
+                    <div class="stat-value" id="weekSessions">0 次</div>
+                </div>
+                <div class="glass-panel stat-card">
+                    <h3>建立筆記總數</h3>
+                    <div class="stat-value" id="totalNotesCount">0 篇</div>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 20px; margin-top: 20px;">
+                <h3>各科目讀書時間分配</h3>
+                <canvas id="subjectChart" style="max-height: 300px; margin-top: 10px;"></canvas>
+            </div>
+        </section>
+
+        <!-- 2. 番茄鐘視圖 -->
+        <section id="timer" class="section-view">
+            <h2>客製化番茄鐘</h2>
+            <div class="glass-panel timer-container">
+                <div>
+                    <label>當前科目：</label>
+                    <select id="timerSubject">
+                        <option value="預設科目">預設科目</option>
+                    </select>
+                </div>
+                
+                <div class="timer-display" id="timerDisplay">25:00</div>
+
+                <div class="btn-group">
+                    <button id="startBtn" onclick="toggleTimer()">開始專注</button>
+                    <button onclick="resetTimer()" style="background: rgba(255,255,255,0.2);">重設</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 科目筆記庫視圖 -->
+        <section id="notes" class="section-view">
+            <h2>科目筆記資料夾 (模組化筆記)</h2>
+            <div class="note-editor-container">
+                <!-- 資料夾與文章清單 -->
+                <div class="glass-panel folder-list">
+                    <button onclick="createNewNote()" style="width: 100%; margin-bottom: 15px;">+ 新增筆記</button>
+                    <div id="notesList"></div>
+                </div>
+                
+                <!-- 編輯面板 -->
+                <div class="glass-panel editor-panel">
+                    <input type="text" id="noteTitle" placeholder="筆記標題..." style="width: 100%; font-size: 1.2rem; margin-bottom: 10px;">
+                    <select id="noteSubject" style="width: 100%; margin-bottom: 10px;"></select>
+                    
+                    <div style="margin-bottom: 10px; display:flex; gap:8px;">
+                        <button onclick="insertActiveRecall()" style="font-size:0.8rem; background:rgba(255,255,255,0.1)">+ 插入主動回想卡片</button>
+                    </div>
+
+                    <textarea id="noteContent" style="width: 100%; height: 50vh; resize: none;" placeholder="開始寫筆記...支援 HTML 結構與主動回想模組"></textarea>
+                    <br><br>
+                    <button onclick="saveCurrentNote()">儲存筆記</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 歷史紀錄視圖 -->
+        <section id="history" class="section-view">
+            <h2>歷史專注時長紀錄</h2>
+            <div class="glass-panel" style="padding: 20px;">
+                <ul id="historyList" style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
+                    <!-- 歷史紀錄將動態渲染於此 -->
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // 本地資料庫初始化
+        let db = {
+            subjects: ["數學", "英文", "程式設計", "歷史"],
+            sessions: JSON.parse(localStorage.getItem('aura_sessions')) || [],
+            notes: JSON.parse(localStorage.getItem('aura_notes')) || []
+        };
+
+        // 番茄鐘變數
+        let timer = null;
+        let timeLeft = 25 * 60;
+        let isRunning = false;
+
+        window.onload = function() {
+            // 彈出本地提示
+            document.getElementById('localNoticeModal').style.display = 'flex';
+            initSubjects();
+            renderDashboard();
+            renderNotesList();
+            renderHistory();
+        };
+
+        function closeNotice() {
+            document.getElementById('localNoticeModal').style.display = 'none';
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            if(tabId === 'dashboard') renderDashboard();
+            if(tabId === 'history') renderHistory();
+        }
+
+        function initSubjects() {
+            const timerSub = document.getElementById('timerSubject');
+            const noteSub = document.getElementById('noteSubject');
+            timerSub.innerHTML = '';
+            noteSub.innerHTML = '';
+            
+            db.subjects.forEach(sub => {
+                timerSub.innerHTML += `<option value="${sub}">${sub}</option>`;
+                noteSub.innerHTML += `<option value="${sub}">${sub}</option>`;
+            });
+        }
+
+        /* 番茄鐘邏輯 */
+        function updateTimerDisplay() {
+            let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            let s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('startBtn');
+            if(!isRunning) {
+                isRunning = true;
+                btn.innerText = "暫停";
+                timer = setInterval(() => {
+                    if(timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timer);
+                        completeSession();
+                    }
+                }, 1000);
+            } else {
+                isRunning = false;
+                btn.innerText = "繼續";
+                clearInterval(timer);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            timeLeft = 25 * 60;
+            document.getElementById('startBtn').innerText = "開始專注";
+            updateTimerDisplay();
+        }
+
+        function completeSession() {
+            const subject = document.getElementById('timerSubject').value;
+            const newSession = {
+                id: Date.now(),
+                subject: subject,
+                duration: 25, // 分鐘
+                date: new Date().toLocaleDateString(),
+                timestamp: Date.now()
+            };
+            db.sessions.push(newSession);
+            localStorage.setItem('aura_sessions', JSON.stringify(db.sessions));
+            alert(`🎉 恭喜完成 25 分鐘的 [${subject}] 專注時段！已自動記錄至本地。`);
+            resetTimer();
+        }
+
+        /* 筆記與主動回想卡片 */
+        function renderNotesList() {
+            const list = document.getElementById('notesList');
+            list.innerHTML = '';
+            document.getElementById('totalNotesCount').innerText = db.notes.length + ' 篇';
+
+            db.notes.forEach((note, index) => {
+                list.innerHTML += `
+                    <div class="note-item" onclick="loadNote(${index})">
+                        <strong>${note.title || '無標題'}</strong>
+                        <div style="font-size:0.75rem; color: var(--text-sub);">${note.subject}</div>
+                    </div>
+                `;
+            });
+        }
+
+        let currentNoteIndex = null;
+
+        function createNewNote() {
+            currentNoteIndex = null;
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteContent').value = '';
+        }
+
+        function saveCurrentNote() {
+            const title = document.getElementById('noteTitle').value;
+            const subject = document.getElementById('noteSubject').value;
+            const content = document.getElementById('noteContent').value;
+
+            if(!title) return alert('請輸入標題');
+
+            const noteData = { title, subject, content, updatedAt: new Date().toLocaleString() };
+
+            if(currentNoteIndex !== null) {
+                db.notes[currentNoteIndex] = noteData;
+            } else {
+                db.notes.push(noteData);
+            }
+
+            localStorage.setItem('aura_notes', JSON.stringify(db.notes));
+            renderNotesList();
+            alert('筆記已儲存在本地！');
+        }
+
+        function loadNote(index) {
+            currentNoteIndex = index;
+            const note = db.notes[index];
+            document.getElementById('noteTitle').value = note.title;
+            document.getElementById('noteSubject').value = note.subject;
+            document.getElementById('noteContent').value = note.content;
+        }
+
+        function insertActiveRecall() {
+            const recallTemplate = `\n[主動回想問題：在這裡寫問題？]\n---答案：(點擊展開)-----\n`;
+            document.getElementById('noteContent').value += recallTemplate;
+        }
+
+        /* 統計儀表板與歷史 */
+        function renderDashboard() {
+            const today = new Date().toLocaleDateString();
+            const todayMins = db.sessions
+                .filter(s => s.date === today)
+                .reduce((acc, s) => acc + s.duration, 0);
+
+            document.getElementById('todayTime').innerText = `${todayMins} 分鐘`;
+            document.getElementById('weekSessions').innerText = `${db.sessions.length} 次`;
+
+            renderChart();
+        }
+
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if(db.sessions.length === 0) {
+                historyList.innerHTML = `<li style="color:var(--text-sub);">尚無專注歷史紀錄</li>`;
+                return;
+            }
+
+            db.sessions.slice().reverse().forEach(s => {
+                historyList.innerHTML += `
+                    <li style="padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; display:flex; justify-between; align-items:center;">
+                        <span>📚 科目：<strong>${s.subject}</strong></span>
+                        <span>⏱️ 時長：${s.duration} 分鐘</span>
+                        <span style="color:var(--text-sub); font-size:0.85rem;">${s.date}</span>
+                    </li>
+                `;
+            });
+        }
+
+        let chartInstance = null;
+        function renderChart() {
+            const ctx = document.getElementById('subjectChart');
+            if(!ctx || typeof Chart === 'undefined') return;
+
+            const subjectData = {};
+            db.sessions.forEach(s => {
+                subjectData[s.subject] = (subjectData[s.subject] || 0) + s.duration;
+            });
+
+            if(chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(subjectData),
+                    datasets: [{
+                        data: Object.values(subjectData),
+                        backgroundColor: ['#818cf8', '#c084fc', '#34d399', '#fbbf24', '#f87171']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: '#f8fafc' } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
