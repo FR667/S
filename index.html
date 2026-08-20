@@ -11,7 +11,7 @@
     <style>
         :root {
             --bg-img-1: url('https://i.ibb.co/1f9kjZvX/1000010527.jpg');
-            --bg-img-2: url('https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg'); [source: 3]
+            --bg-img-2: url('https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg');
             --bg-overlay: rgba(15, 23, 42, 0.75);
             --glass-bg: rgba(255, 255, 255, 0.08);
             --glass-border: rgba(255, 255, 255, 0.18);
@@ -166,7 +166,7 @@
             border-radius: 20px 20px 0 0;
             justify-content: space-around;
             align-items: center;
-            background: rgba(15, 23, 42, 0.92);
+            background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(20px);
             border-top: 1px solid var(--glass-border);
         }
@@ -196,7 +196,7 @@
             display: none;
             flex-direction: column;
             gap: 20px;
-            padding-bottom: 80px;
+            padding-bottom: 20px;
         }
 
         .view-section.active { display: flex; }
@@ -255,7 +255,7 @@
         }
 
         .timer-text {
-            font-size: clamp(3.8rem, 13vw, 7rem);
+            font-size: clamp(3.2rem, 12vw, 7rem);
             font-weight: 800;
             font-family: 'Courier New', Courier, monospace;
             letter-spacing: 2px;
@@ -268,6 +268,7 @@
             width: 100%;
             max-width: 360px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .timer-btn-group {
@@ -321,7 +322,7 @@
             top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 2000;
             justify-content: center;
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img-2) center/cover no-repeat; [source: 3]
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), var(--bg-img-2) center/cover no-repeat;
             border-radius: 0;
         }
 
@@ -394,7 +395,7 @@
             width: 100%;
             max-width: 500px;
             min-height: 240px;
-            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), var(--bg-img-2) center/cover no-repeat; [source: 3]
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), var(--bg-img-2) center/cover no-repeat;
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 28px;
@@ -461,15 +462,56 @@
 
         .history-table th { color: var(--text-sub); }
 
+        /* ===== 手機版與直向螢幕適配與排版修復 ===== */
         @media (max-width: 768px) {
-            .app-layout { padding: 10px; }
+            body {
+                height: 100vh;
+                overflow: hidden;
+            }
+            .app-layout { 
+                padding: 10px; 
+                height: 100vh;
+                flex-direction: column;
+            }
             aside { display: none; }
             .mobile-nav-bar { display: flex; }
+            
+            main {
+                padding-bottom: 80px; /* 留出底部導覽列空間 */
+                height: calc(100vh - 20px);
+            }
+
+            .view-section {
+                padding-bottom: 60px;
+            }
+
+            /* 筆記區直線化彈性調整 */
             .note-workspace {
                 grid-template-columns: 1fr;
                 height: auto;
+                min-height: 100%;
             }
-            .note-sidebar { max-height: 180px; }
+            .note-sidebar { 
+                max-height: 160px; 
+                overflow-y: auto;
+            }
+            .note-editor-panel {
+                min-height: 380px;
+            }
+
+            .subject-input-group {
+                flex-direction: row;
+            }
+
+            .subject-input-group select,
+            .subject-input-group input {
+                width: 100% !important;
+            }
+
+            .history-table th, .history-table td {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -493,7 +535,7 @@
         <!-- 桌面側邊欄 -->
         <aside class="glass-panel">
             <div class="brand-header">
-                <img src="https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg" alt="Logo" class="brand-avatar"> [source: 3]
+                <img src="https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg" alt="Logo" class="brand-avatar">
                 <div class="brand-title">讀書軟體</div>
             </div>
 
@@ -588,7 +630,7 @@
                             <button onclick="insertModule('header')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">### 標題</button>
                         </div>
 
-                        <textarea id="noteBodyInput" style="flex: 1; resize: none; min-height: 200px; line-height: 1.6;" placeholder="在此輸入筆記內容，支援 Markdown 與主動回想塊..." oninput="onNoteAutoSave()"></textarea>
+                        <textarea id="noteBodyInput" style="flex: 1; resize: none; min-height: 180px; line-height: 1.6;" placeholder="在此輸入筆記內容，支援 Markdown 與主動回想塊..." oninput="onNoteAutoSave()"></textarea>
 
                         <div style="border-top: 1px solid var(--glass-border); padding-top: 10px;">
                             <h4 style="margin-bottom: 8px; color: var(--text-sub);">📖 即時預覽與展開測試</h4>
