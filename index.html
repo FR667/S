@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>讀書軟體</title>
+    <title>讀書軟體 - 全功能完整終極整合版</title>
     <!-- Chart.js 數據視覺化 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- CryptoJS 安全雜湊演算法 -->
@@ -44,7 +44,6 @@
             transition: background 0.5s ease;
         }
 
-        /* 毛玻璃面板基底 */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(var(--glass-blur));
@@ -55,7 +54,6 @@
             transition: all 0.3s ease;
         }
 
-        /* 密碼鎖定遮罩 */
         .lock-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -77,7 +75,6 @@
             gap: 16px;
         }
 
-        /* 手機端頂部列 (Header bar) */
         .mobile-header {
             display: none;
             height: 56px;
@@ -103,7 +100,6 @@
             align-items: center;
         }
 
-        /* 抽屜式遮罩與菜單 */
         .drawer-overlay {
             display: none;
             position: fixed;
@@ -130,7 +126,6 @@
             overflow: hidden;
         }
 
-        /* 側邊欄 Sidebar / 手機抽屜 Drawer */
         aside {
             width: 280px;
             padding: 20px 16px;
@@ -208,7 +203,6 @@
             border-left: 4px solid var(--accent);
         }
 
-        /* 倒數計時元件 */
         .countdown-card {
             padding: 12px 14px;
             text-align: center;
@@ -217,7 +211,6 @@
             border: 1px solid var(--glass-border);
         }
 
-        /* 主內容區 */
         main {
             flex: 1;
             height: 100%;
@@ -235,7 +228,6 @@
 
         .view-section.active { display: flex; }
 
-        /* 控制元件 */
         input, select, textarea, button {
             background: rgba(0, 0, 0, 0.35);
             border: 1px solid var(--glass-border);
@@ -267,7 +259,6 @@
 
         button:active { transform: scale(0.97); }
 
-        /* 計時器面板 */
         .timer-wrapper {
             padding: 35px 20px;
             text-align: center;
@@ -343,7 +334,6 @@
             font-size: 1rem;
         }
 
-        /* 臥室音樂控制模組 */
         .bedroom-audio-box {
             width: 100%;
             max-width: 450px;
@@ -356,7 +346,6 @@
             gap: 10px;
         }
 
-        /* 全螢幕專注模式 (Zen Mode) */
         .zen-exit-btn {
             display: none;
             position: fixed;
@@ -393,12 +382,12 @@
             border-radius: 0;
         }
 
-        /* 筆記模組 */
+        /* 筆記模組增強 */
         .note-workspace {
             display: grid;
-            grid-template-columns: 260px 1fr;
+            grid-template-columns: 280px 1fr;
             gap: 16px;
-            min-height: calc(100vh - 80px);
+            min-height: calc(100vh - 100px);
         }
 
         .note-sidebar, .note-editor-panel {
@@ -422,7 +411,27 @@
             border-color: var(--accent);
         }
 
-        /* 主動回想塊 */
+        .editor-toolbar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.2);
+            padding: 6px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .editor-toolbar button {
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 0.8rem;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .editor-toolbar button:hover {
+            background: var(--accent);
+        }
+
         .active-recall-block {
             border-left: 4px solid var(--accent);
             background: rgba(0, 0, 0, 0.3);
@@ -448,36 +457,71 @@
             color: var(--text-main);
         }
 
-        /* 閃卡卡片 */
-        .flashcard-container {
-            min-height: 240px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
+        /* 閃卡 3D 翻轉與精美面板 */
+        .flashcard-3d-wrapper {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 520px;
+            height: 280px;
+            margin: 20px auto;
+            cursor: pointer;
         }
 
-        .flashcard {
+        .flashcard-inner {
+            position: relative;
             width: 100%;
-            max-width: 500px;
-            min-height: 240px;
-            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), var(--bg-img-2) center/cover no-repeat;
-            border: 1px solid var(--glass-border);
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flashcard-3d-wrapper.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
             border-radius: 20px;
-            padding: 28px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            text-align: center;
-            cursor: pointer;
+            border: 1px solid var(--glass-border);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
-        .flashcard:hover { transform: translateY(-3px); border-color: var(--accent); }
+        .flashcard-front {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+        }
 
-        /* 待辦事項 */
+        .flashcard-back {
+            background: linear-gradient(135deg, rgba(49, 46, 129, 0.9), rgba(15, 23, 42, 0.95));
+            transform: rotateY(180deg);
+            border-color: var(--accent);
+        }
+
+        .card-badge {
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent);
+        }
+
+        .card-main-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1.6;
+            margin: auto 0;
+            word-break: break-word;
+        }
+
         .todo-item {
             display: flex;
             align-items: center;
@@ -493,7 +537,6 @@
             color: var(--text-sub);
         }
 
-        /* 數據圖表與統計 */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -534,95 +577,56 @@
 
         .history-table th { color: var(--text-sub); }
 
-        /* ===== 手機端直向（RWD）優化 ===== */
+        /* 使用說明樣式 */
+        .help-guide-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-sub);
+        }
+
+        .help-guide-box h4 {
+            color: var(--accent);
+            margin-top: 6px;
+        }
+
+        .help-guide-box code {
+            background: rgba(0,0,0,0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #f472b6;
+        }
+
         @media (max-width: 768px) {
-            body {
-                height: 100vh;
-                overflow: hidden;
-            }
-
-            .mobile-header {
-                display: flex;
-            }
-
-            .drawer-close-btn {
-                display: block;
-            }
-
-            .app-layout { 
-                padding: 10px; 
-                height: calc(100vh - 56px);
-                flex-direction: column;
-                overflow: hidden;
-            }
-
+            body { height: 100vh; overflow: hidden; }
+            .mobile-header { display: flex; }
+            .drawer-close-btn { display: block; }
+            .app-layout { padding: 10px; height: calc(100vh - 56px); flex-direction: column; overflow: hidden; }
             aside {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                width: 280px;
-                z-index: 1001;
-                background: rgba(15, 23, 42, 0.95);
-                backdrop-filter: blur(25px);
-                -webkit-backdrop-filter: blur(25px);
-                transform: translateX(-100%);
-                border-radius: 0;
-                border-right: 1px solid var(--glass-border);
+                position: fixed; top: 0; left: 0; height: 100vh; width: 280px; z-index: 1001;
+                background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+                transform: translateX(-100%); border-radius: 0; border-right: 1px solid var(--glass-border);
                 box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
             }
-
-            aside.drawer-open {
-                transform: translateX(0);
-            }
-            
-            main {
-                height: 100%;
-                padding-right: 0;
-                overflow-y: auto;
-            }
-
-            .view-section {
-                padding-bottom: 30px;
-            }
-
-            .note-workspace {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
-
-            .note-sidebar { 
-                max-height: 180px; 
-                overflow-y: auto;
-            }
-
-            .note-editor-panel {
-                min-height: 400px;
-            }
-
-            .subject-input-group select,
-            .subject-input-group input {
-                width: 100% !important;
-            }
-
-            .timer-btn-group button {
-                padding: 10px 0;
-                font-size: 0.9rem;
-            }
-
-            .history-table th, .history-table td {
-                padding: 8px 10px;
-                font-size: 0.8rem;
-            }
+            aside.drawer-open { transform: translateX(0); }
+            main { height: 100%; padding-right: 0; overflow-y: auto; }
+            .view-section { padding-bottom: 30px; }
+            .note-workspace { grid-template-columns: 1fr; height: auto; }
+            .note-sidebar { max-height: 180px; overflow-y: auto; }
+            .note-editor-panel { min-height: 400px; }
+            .subject-input-group select, .subject-input-group input { width: 100% !important; }
+            .timer-btn-group button { padding: 10px 0; font-size: 0.9rem; }
+            .history-table th, .history-table td { padding: 8px 10px; font-size: 0.8rem; }
+            .flashcard-3d-wrapper { height: 250px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Zen Mode 懸浮退出按鈕 -->
     <button class="zen-exit-btn" onclick="toggleZenMode()">❌ 退出全螢幕專注</button>
 
-    <!-- 密碼鎖畫面 -->
     <div class="lock-screen" id="lockScreen" style="display: none;">
         <div class="glass-panel lock-box">
             <h2 style="color: var(--accent);" id="lockTitle">🔒 請輸入解鎖密碼</h2>
@@ -632,19 +636,15 @@
         </div>
     </div>
 
-    <!-- 手機版頂部工具列 -->
     <header class="mobile-header">
         <button class="mobile-menu-btn" onclick="toggleDrawer(true)">☰</button>
         <div class="brand-title" style="font-size: 1.1rem;">讀書軟體</div>
         <div style="width: 24px;"></div>
     </header>
 
-    <!-- 手機抽屜背景遮罩 -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer(false)"></div>
 
-    <!-- 應用主要版面 -->
     <div class="app-layout" id="appLayout">
-        <!-- 側邊欄 Sidebar / 手機 Drawer -->
         <aside class="glass-panel" id="sideDrawer">
             <div class="brand-header">
                 <div class="brand-info">
@@ -654,7 +654,6 @@
                 <button class="drawer-close-btn" onclick="toggleDrawer(false)">✕</button>
             </div>
 
-            <!-- 倒數計時區塊 -->
             <div class="countdown-card">
                 <span style="font-size: 0.8rem; color: var(--text-sub);" id="targetExamTitle">🎯 目標考試倒數</span>
                 <div id="examCountdown" style="font-size: 1.15rem; font-weight: 800; color: var(--accent); margin-top: 2px;">倒數 -- 天</div>
@@ -670,12 +669,10 @@
             </ul>
         </aside>
 
-        <!-- 主內容區 -->
         <main>
             <!-- 1. 專注計時器 -->
             <section id="timer" class="view-section active">
                 <div class="glass-panel timer-wrapper">
-                    <!-- 計時模式切換鈕 -->
                     <div class="non-zen-hide mode-switch-container">
                         <button class="mode-btn active" id="modePomodoroBtn" onclick="switchTimerMode('pomodoro')">⏳ 番茄鐘 (倒數)</button>
                         <button class="mode-btn" id="modeStopwatchBtn" onclick="switchTimerMode('stopwatch')">⏱️ 正向計時</button>
@@ -702,7 +699,6 @@
                         <button onclick="toggleZenMode()" style="background: rgba(255,255,255,0.15);">🧘 全螢幕</button>
                     </div>
 
-                    <!-- 卧室音樂與環境音完整控制面板 -->
                     <div class="non-zen-hide bedroom-audio-box">
                         <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between; font-size: 0.85rem;">
                             <span style="font-weight: bold; color: var(--accent);">🎵 臥室輕量音樂/環境音：</span>
@@ -743,7 +739,7 @@
                 </div>
             </section>
 
-            <!-- 3. 讀書筆記 -->
+            <!-- 3. 讀書筆記 (改進版) -->
             <section id="notes" class="view-section">
                 <div class="note-workspace">
                     <div class="glass-panel note-sidebar">
@@ -759,38 +755,87 @@
                             <button onclick="deleteCurrentNote()" style="background: #f87171;">刪除</button>
                         </div>
 
-                        <div style="display: flex; gap: 8px; margin: 4px 0; flex-wrap: wrap;">
-                            <button onclick="insertModule('recall')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">+ 插入閃卡塊 (❓/💡)</button>
-                            <button onclick="insertModule('bold')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">**粗體**</button>
-                            <button onclick="insertModule('header')" style="font-size:0.8rem; background:rgba(255,255,255,0.15)">### 標題</button>
+                        <!-- 增強工具列 -->
+                        <div class="editor-toolbar">
+                            <button onclick="insertModule('recall')">❓ 閃卡語法範本</button>
+                            <button onclick="insertModule('header')">H3 標題</button>
+                            <button onclick="insertModule('bold')">B 粗體</button>
+                            <button onclick="insertModule('list')">• 列表</button>
+                            <button onclick="insertModule('quote')">💬 引用塊</button>
                         </div>
 
-                        <textarea id="noteBodyInput" style="flex: 1; resize: none; min-height: 180px; line-height: 1.6;" placeholder="在此輸入筆記內容，支援 Markdown 與主動回想塊..." oninput="onNoteAutoSave()"></textarea>
+                        <textarea id="noteBodyInput" style="flex: 1; resize: none; min-height: 200px; line-height: 1.6;" placeholder="在此輸入筆記內容...&#10;&#10;💡 閃卡自動生成格式範例：&#10;❓ [這是一道抽考問題？]&#10;💡 這是該問題的詳細解答" oninput="onNoteAutoSave()"></textarea>
 
-                        <div style="border-top: 1px solid var(--glass-border); padding-top: 10px;">
-                            <h4 style="margin-bottom: 8px; color: var(--text-sub);">📖 即時預覽與展開測試</h4>
-                            <div id="notePreviewRender" style="line-height: 1.6;"></div>
+                        <div style="border-top: 1px solid var(--glass-border); padding-top: 10px; max-height: 200px; overflow-y: auto;">
+                            <h4 style="margin-bottom: 8px; color: var(--text-sub); font-size: 0.9rem;">📖 即時預覽與主動回想測試：</h4>
+                            <div id="notePreviewRender" style="line-height: 1.6; font-size: 0.95rem;"></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 4. 抽考閃卡 -->
+            <!-- 4. 抽考閃卡 (完全改進超好用版) -->
             <section id="cards" class="view-section">
-                <div class="glass-panel" style="padding: 24px; text-align: center;">
-                    <h3>🎴 筆記自動抽考閃卡</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">只要在筆記中使用「❓ [問題] / 💡 答案」格式，系統會自動生成閃卡。</p>
-                    
-                    <div class="flashcard-container">
-                        <div class="flashcard" onclick="flipFlashcard()" id="flashcardBox">
-                            <span id="flashcardTag" style="font-size:0.85rem; color:var(--accent); margin-bottom:8px;">點擊翻面</span>
-                            <div id="flashcardContent" style="font-size: 1.25rem; font-weight: bold; line-height: 1.5;">目前無閃卡內容</div>
+                <div class="glass-panel" style="padding: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+                        <div>
+                            <h3>🎴 抽考閃卡卡片盒</h3>
+                            <p style="font-size: 0.82rem; color: var(--text-sub);">自動連動筆記，也可以在此直接獨立新增自訂閃卡！</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <select id="cardFilterSubject" onchange="extractFlashcards()" style="font-size: 0.85rem;">
+                                <option value="ALL">🌐 全部分科</option>
+                            </select>
+                            <button onclick="openCustomCardModal()" style="font-size: 0.85rem; background: #10b981;">+ 新增自訂閃卡</button>
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 12px; justify-content: center; max-width: 320px; margin: 0 auto;">
-                        <button onclick="prevFlashcard()" style="flex:1; background:rgba(255,255,255,0.15);">👈 上一張</button>
-                        <button onclick="nextFlashcard()" style="flex:1;">下一張 👉</button>
+                    <!-- 3D 閃卡 -->
+                    <div class="flashcard-3d-wrapper" id="flashcardBox" onclick="flipFlashcard()">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-face flashcard-front">
+                                <div style="display: flex; justify-content: space-between; width: 100%;">
+                                    <span class="card-badge" id="cardFrontSub">科目</span>
+                                    <span style="font-size: 0.8rem; color: var(--text-sub);" id="cardProgressTag">0/0</span>
+                                </div>
+                                <div class="card-main-text" id="cardQuestionText">目前無閃卡內容</div>
+                                <span style="font-size: 0.8rem; color: var(--accent);">👆 點擊翻面看答案</span>
+                            </div>
+                            <div class="flashcard-face flashcard-back">
+                                <div style="display: flex; justify-content: space-between; width: 100%;">
+                                    <span class="card-badge" style="background: rgba(129, 140, 248, 0.3);">💡 詳細解答</span>
+                                    <span style="font-size: 0.8rem; color: var(--text-sub);">解答頁</span>
+                                </div>
+                                <div class="card-main-text" id="cardAnswerText">解答會顯示在這裡</div>
+                                <span style="font-size: 0.8rem; color: var(--text-sub);">👆 點擊翻回問題</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 熟練度與切換按鈕 -->
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 10px;">
+                        <div style="display: flex; gap: 12px; justify-content: center; width: 100%; max-width: 360px;">
+                            <button onclick="markCardMastery(false)" style="flex:1; background: rgba(239, 68, 68, 0.2); border: 1px solid #f87171; color: #f87171;">❌ 還不熟悉</button>
+                            <button onclick="markCardMastery(true)" style="flex:1; background: rgba(16, 185, 129, 0.2); border: 1px solid #34d399; color: #34d399;">✅ 已經記住</button>
+                        </div>
+                        <div style="display: flex; gap: 12px; justify-content: center; width: 100%; max-width: 360px;">
+                            <button onclick="prevFlashcard()" style="flex:1; background:rgba(255,255,255,0.15);">👈 上一張</button>
+                            <button onclick="nextFlashcard()" style="flex:1;">下一張 👉</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 手動新增閃卡彈窗模組 -->
+                <div class="glass-panel" id="customCardInputBlock" style="display: none; padding: 20px;">
+                    <h4>➕ 新增獨立閃卡</h4>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                        <select id="newCardSubjectSelect"></select>
+                        <input type="text" id="newCardQInput" placeholder="輸入問題（例如：光合作用的場所？）">
+                        <textarea id="newCardAInput" rows="2" placeholder="輸入解答（例如：葉綠體）"></textarea>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="saveCustomCard()" style="flex:1; background: #10b981;">儲存閃卡</button>
+                            <button onclick="closeCustomCardModal()" style="flex:1; background: rgba(255,255,255,0.15);">取消</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -861,11 +906,36 @@
                 </div>
             </section>
 
-            <!-- 6. 偏好與設定 -->
+            <!-- 6. 偏好與設定 (新增使用說明面板) -->
             <section id="custom" class="view-section">
                 <h2>⚙️ 軟體偏好與客製化設定</h2>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+
+                    <!-- 新增：系統使用說明與技巧 -->
+                    <div class="glass-panel" style="padding: 20px; grid-column: 1 / -1;">
+                        <h3>💡 讀書軟體 - 功能使用說明手冊</h3>
+                        <div class="help-guide-box" style="margin-top: 12px;">
+                            <div>
+                                <h4>⏱️ 專注計時器</h4>
+                                <p>支援 **番茄鐘**（預設 25 分鐘倒數）與 **正向計時**。可以在上方快速切換或新增科目，並設定當前研讀目標。下方提供粉紅降噪與臥室背景音樂播放。</p>
+                            </div>
+                            <div>
+                                <h4>📁 讀書筆記與主動回想</h4>
+                                <p>在筆記內點擊「❓ 閃卡語法範本」即可插入問答塊。語法格式如下：</p>
+                                <p><code>❓ [問題內容？]</code><br><code>💡 答案內容</code></p>
+                                <p>這類型的語法會在筆記下方即時轉化為點擊展開的遮罩問答，方便自我測驗！</p>
+                            </div>
+                            <div>
+                                <h4>🎴 抽考閃卡</h4>
+                                <p>系統會**自動提取**所有筆記中的 <code>❓/💡</code> 語法生成閃卡。您也可以點擊「+ 新增自訂閃卡」直接手動添加單字或知識點卡片，並透過「記得/忘記」按鈕測試掌握度！</p>
+                            </div>
+                            <div>
+                                <h4>📊 學習統計與備份</h4>
+                                <p>所有計時紀錄會自動繪製成圖表與圓餅圖。若需更換設備，可以在下方點擊「匯出備份」下載 JSON 檔，並在另一台設備「匯入備份」。</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- 考試倒數設定 -->
                     <div class="glass-panel" style="padding: 20px;">
@@ -960,6 +1030,7 @@
                     updatedAt: new Date().toLocaleString() 
                 }
             ],
+            customCards: JSON.parse(localStorage.getItem('aura_custom_cards')) || [],
             exam: JSON.parse(localStorage.getItem('aura_exam')) || {
                 name: '目標考試',
                 date: '2026-06-18'
@@ -969,25 +1040,22 @@
             }
         };
 
-        let timerMode = 'pomodoro'; // 'pomodoro' 或 'stopwatch'
+        let timerMode = 'pomodoro';
         let timerId = null;
         let isRunning = false;
         let isBreakMode = false;
-        let timeLeft = appState.focusMins * 60; // 番茄鐘秒數
-        let stopwatchSeconds = 0;             // 正向計時秒數
+        let timeLeft = appState.focusMins * 60;
+        let stopwatchSeconds = 0;
         let sessionStartTime = null;
         let activeNoteId = appState.notes[0]?.id || null;
 
         let flashcardList = [];
         let currentCardIndex = 0;
-        let isCardFlipped = false;
 
-        /* 音樂與環境音變數 */
         let audioCtx = null;
         let noiseSource = null;
         let gainNode = null;
 
-        /* Chart 圖表實例 */
         let chartDoughnut = null;
         let chartWeekly = null;
         let chartTimeSlot = null;
@@ -1111,10 +1179,17 @@
         function renderSubjectDropdowns() {
             const tSel = document.getElementById('timerSubjectDropdown');
             const nSel = document.getElementById('noteSubjectDropdown');
-            tSel.innerHTML = ''; nSel.innerHTML = '';
+            const fSel = document.getElementById('cardFilterSubject');
+            const cSel = document.getElementById('newCardSubjectSelect');
+
+            tSel.innerHTML = ''; nSel.innerHTML = ''; cSel.innerHTML = '';
+            fSel.innerHTML = '<option value="ALL">🌐 全部分科</option>';
+
             appState.subjects.forEach(sub => {
                 tSel.innerHTML += `<option value="${sub}">${sub}</option>`;
                 nSel.innerHTML += `<option value="${sub}">${sub}</option>`;
+                cSel.innerHTML += `<option value="${sub}">${sub}</option>`;
+                fSel.innerHTML += `<option value="${sub}">${sub}</option>`;
             });
         }
 
@@ -1220,7 +1295,6 @@
             }
         }
 
-        /* ===== 計時模式切換核心 ===== */
         function switchTimerMode(mode) {
             if(isRunning) {
                 if(!confirm('計時仍在進行中，切換模式將會重置當前計時，確定切換？')) return;
@@ -1343,7 +1417,6 @@
             }
         }
 
-        /* ===== 臥室音樂與環境音完整系統 ===== */
         function stopAllAudio() {
             if(noiseSource) {
                 try { noiseSource.stop(); noiseSource.disconnect(); } catch(e){}
@@ -1446,16 +1519,12 @@
         }
 
         function adjustVolume(val) {
-            if(gainNode) {
-                gainNode.gain.value = parseFloat(val);
-            }
+            if(gainNode) gainNode.gain.value = parseFloat(val);
             const audio = document.getElementById('bedroomAudioPlayer');
-            if(audio) {
-                audio.volume = parseFloat(val);
-            }
+            if(audio) audio.volume = parseFloat(val);
         }
 
-        /* ===== 筆記模組核心 ===== */
+        /* ===== 筆記核心 ===== */
         let autoSaveTimer = null;
         function onNoteAutoSave() {
             if(autoSaveTimer) clearTimeout(autoSaveTimer);
@@ -1534,11 +1603,15 @@
         function insertModule(type) {
             const input = document.getElementById('noteBodyInput');
             if(type === 'recall') {
-                input.value += `\n❓ [在這裡輸入問題？]\n💡 答案：在此輸入詳細解答\n`;
+                input.value += `\n❓ [在這裡輸入抽考問題？]\n💡 在此輸入詳細答案\n`;
             } else if(type === 'bold') {
                 input.value += ` **粗體文字** `;
             } else if(type === 'header') {
                 input.value += `\n### 標題名稱\n`;
+            } else if(type === 'list') {
+                input.value += `\n- 列表項目 1\n- 列表項目 2\n`;
+            } else if(type === 'quote') {
+                input.value += `\n> 引用重點內容\n`;
             }
             onNoteAutoSave();
         }
@@ -1557,7 +1630,8 @@
                     `;
                 })
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/^### (.*$)/gim, '<h3 style="margin:8px 0; color:var(--accent);">$1</h3>');
+                .replace(/^### (.*$)/gim, '<h3 style="margin:8px 0; color:var(--accent);">$1</h3>')
+                .replace(/^> (.*$)/gim, '<blockquote style="border-left: 3px solid var(--accent); padding-left: 8px; color: var(--text-sub);">$1</blockquote>');
 
             container.innerHTML = formatted.replace(/\n/g, '<br>');
         }
@@ -1567,62 +1641,105 @@
             ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
         }
 
-        /* ===== 閃卡模組 ===== */
+        /* ===== 閃卡模組 (重構好用版) ===== */
         function extractFlashcards() {
             flashcardList = [];
+            const filterSubject = document.getElementById('cardFilterSubject')?.value || 'ALL';
+
+            // 1. 從筆記讀取
             const regex = /❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g;
             appState.notes.forEach(note => {
+                if(filterSubject !== 'ALL' && note.subject !== filterSubject) return;
                 let match;
                 while ((match = regex.exec(note.content)) !== null) {
-                    flashcardList.push({ question: match[1], answer: match[2], subject: note.subject });
+                    flashcardList.push({ question: match[1], answer: match[2], subject: note.subject, source: 'note' });
+                }
+            });
+
+            // 2. 從獨立閃卡讀取
+            (appState.customCards || []).forEach(c => {
+                if(filterSubject === 'ALL' || c.subject === filterSubject) {
+                    flashcardList.push({ question: c.question, answer: c.answer, subject: c.subject, source: 'custom' });
                 }
             });
 
             currentCardIndex = 0;
-            isCardFlipped = false;
             renderFlashcard();
         }
 
         function renderFlashcard() {
-            const tag = document.getElementById('flashcardTag');
-            const content = document.getElementById('flashcardContent');
+            const wrapper = document.getElementById('flashcardBox');
+            wrapper.classList.remove('flipped');
+
+            const subTag = document.getElementById('cardFrontSub');
+            const progTag = document.getElementById('cardProgressTag');
+            const qText = document.getElementById('cardQuestionText');
+            const aText = document.getElementById('cardAnswerText');
+
             if(flashcardList.length === 0) {
-                tag.innerText = "提示";
-                content.innerText = "筆記中目前沒有閃卡題目！";
+                subTag.innerText = "提示";
+                progTag.innerText = "0/0";
+                qText.innerText = "目前沒有閃卡！點擊右上方「+ 新增自訂閃卡」或在筆記寫下 ❓/💡 格式。";
+                aText.innerText = "無解答";
                 return;
             }
 
             const card = flashcardList[currentCardIndex];
-            if(isCardFlipped) {
-                tag.innerText = `💡 解答 (${card.subject}) - 點擊翻回問題`;
-                content.innerText = card.answer;
-            } else {
-                tag.innerText = `❓ 問題 (${currentCardIndex + 1}/${flashcardList.length}) [${card.subject}] - 點擊看答案`;
-                content.innerText = card.question;
-            }
+            subTag.innerText = `📚 ${card.subject}`;
+            progTag.innerText = `${currentCardIndex + 1} / ${flashcardList.length}`;
+            qText.innerText = card.question;
+            aText.innerText = card.answer;
         }
 
         function flipFlashcard() {
             if(flashcardList.length === 0) return;
-            isCardFlipped = !isCardFlipped;
-            renderFlashcard();
+            document.getElementById('flashcardBox').classList.toggle('flipped');
         }
 
         function nextFlashcard() {
             if(flashcardList.length === 0) return;
             currentCardIndex = (currentCardIndex + 1) % flashcardList.length;
-            isCardFlipped = false;
             renderFlashcard();
         }
 
         function prevFlashcard() {
             if(flashcardList.length === 0) return;
             currentCardIndex = (currentCardIndex - 1 + flashcardList.length) % flashcardList.length;
-            isCardFlipped = false;
             renderFlashcard();
         }
 
-        /* ===== 統計分析與數據圖表 (完整整合) ===== */
+        function markCardMastery(isMastered) {
+            if(flashcardList.length === 0) return;
+            alert(isMastered ? '🎉 太棒了！此卡片標記為已記住。' : '💪 加油！繼續複習這張卡片。');
+            nextFlashcard();
+        }
+
+        function openCustomCardModal() {
+            document.getElementById('customCardInputBlock').style.display = 'block';
+        }
+
+        function closeCustomCardModal() {
+            document.getElementById('customCardInputBlock').style.display = 'none';
+        }
+
+        function saveCustomCard() {
+            const subject = document.getElementById('newCardSubjectSelect').value;
+            const question = document.getElementById('newCardQInput').value.trim();
+            const answer = document.getElementById('newCardAInput').value.trim();
+
+            if(!question || !answer) return alert('請填寫完整題目與解答！');
+
+            appState.customCards.push({ id: 'card_' + Date.now(), subject, question, answer });
+            localStorage.setItem('aura_custom_cards', JSON.stringify(appState.customCards));
+
+            document.getElementById('newCardQInput').value = '';
+            document.getElementById('newCardAInput').value = '';
+            closeCustomCardModal();
+            extractFlashcards();
+            alert('閃卡新增成功！');
+        }
+
+        /* ===== 統計分析 ===== */
         function renderDashboard() {
             const todayStr = new Date().toLocaleDateString();
             const todayMins = appState.sessions.filter(s => s.date === todayStr).reduce((a, b) => a + b.duration, 0);
@@ -1666,7 +1783,6 @@
         function renderCharts(subjectMap) {
             if(typeof Chart === 'undefined') return;
 
-            // 1. 各科目比例圓餅圖
             const ctxD = document.getElementById('subjectDoughnutChart');
             if(ctxD) {
                 if(chartDoughnut) chartDoughnut.destroy();
@@ -1683,7 +1799,6 @@
                 });
             }
 
-            // 2. 近 7 日趨勢長條圖
             const ctxW = document.getElementById('weeklyBarChart');
             if(ctxW) {
                 const last7Days = [];
@@ -1723,7 +1838,6 @@
                 });
             }
 
-            // 3. 時段偏好雷達圖/折線圖
             const ctxT = document.getElementById('timeSlotChart');
             if(ctxT) {
                 const slots = ['早晨 (06-12)', '下午 (12-18)', '晚上 (18-24)', '深夜 (00-06)'];
@@ -1765,7 +1879,7 @@
             }
         }
 
-        /* ===== 資料備份與轉移 ===== */
+        /* ===== 備份轉移 ===== */
         function exportJSONBackup() {
             const blob = new Blob([JSON.stringify(appState, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -1795,6 +1909,7 @@
                             localStorage.setItem('aura_sessions', JSON.stringify(appState.sessions));
                             localStorage.setItem('aura_todos', JSON.stringify(appState.todos || []));
                             localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
+                            localStorage.setItem('aura_custom_cards', JSON.stringify(appState.customCards || []));
                             localStorage.setItem('aura_exam', JSON.stringify(appState.exam || {}));
                             localStorage.setItem('aura_settings', JSON.stringify(appState.settings));
                             location.reload();
