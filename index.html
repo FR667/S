@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>讀書軟體 - 專業增強版</title>
-    <!-- Chart.js -->
+    <!-- Chart.js 數據視覺化 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- CryptoJS 安全雜湊演算法 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         :root {
             --bg-img-1: url('https://i.ibb.co/1f9kjZvX/1000010527.jpg');
@@ -57,7 +59,7 @@
         .lock-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)), var(--bg-img-1) center/cover no-repeat;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), var(--bg-img-1) center/cover no-repeat;
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -282,25 +284,30 @@
             font-size: 1rem;
         }
 
-        /* 全螢幕專注模式 (Zen Mode) */
+        /* 全螢幕專注模式 (Zen Mode) 優化 */
         .zen-exit-btn {
             display: none;
             position: fixed;
-            top: 24px;
-            right: 24px;
-            z-index: 2001;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--glass-border);
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            background: rgba(239, 68, 68, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: #fff;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-weight: bold;
             cursor: pointer;
             backdrop-filter: blur(8px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .zen-exit-btn:hover {
+            background: rgba(220, 38, 38, 1);
         }
 
         .zen-active .app-layout > aside,
         .zen-active .mobile-nav-bar,
-        .zen-active header,
         .zen-active .non-zen-hide {
             display: none !important;
         }
@@ -374,7 +381,7 @@
             color: var(--text-main);
         }
 
-        /* 閃卡卡片 - 融入背景圖 */
+        /* 閃卡卡片 */
         .flashcard-container {
             min-height: 240px;
             display: flex;
@@ -468,10 +475,10 @@
 </head>
 <body>
 
-    <!-- Zen Mode 手機/桌面 懸浮退出按鈕 -->
+    <!-- Zen Mode 行動/桌面 懸浮退出按鈕 -->
     <button class="zen-exit-btn" onclick="toggleZenMode()">❌ 退出全螢幕專注</button>
 
-    <!-- 密碼鎖畫面 (Password Protection) -->
+    <!-- 密碼鎖畫面 -->
     <div class="lock-screen" id="lockScreen" style="display: none;">
         <div class="glass-panel lock-box">
             <h2 style="color: var(--accent);" id="lockTitle">🔒 請輸入解鎖密碼</h2>
@@ -490,7 +497,7 @@
                 <div class="brand-title">讀書軟體</div>
             </div>
 
-            <!-- 考試倒數計時小區塊 -->
+            <!-- 倒數計時區塊 -->
             <div class="countdown-card">
                 <span style="font-size: 0.8rem; color: var(--text-sub);" id="targetExamTitle">🎯 目標考試倒數</span>
                 <div id="examCountdown" style="font-size: 1.15rem; font-weight: 800; color: var(--accent); margin-top: 2px;">倒數 -- 天</div>
@@ -513,7 +520,6 @@
                 <div class="glass-panel timer-wrapper">
                     <span class="timer-status-badge" id="timerModeTag">🎯 專注模式</span>
                     
-                    <!-- 當前科目選單與自訂 -->
                     <div class="non-zen-hide subject-input-group">
                         <label style="color: var(--text-sub); font-size: 0.9rem; white-space: nowrap;">讀書科目：</label>
                         <select id="timerSubjectDropdown" style="flex: 1;"></select>
@@ -672,10 +678,10 @@
                         </div>
                     </div>
                     
-                    <!-- 密碼鎖設定 -->
+                    <!-- 密碼鎖設定 (哈希安全儲存) -->
                     <div class="glass-panel" style="padding: 20px;">
                         <h3>🔒 密碼保護</h3>
-                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，開啟網頁需解鎖。</p>
+                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，開啟網頁需解鎖（SHA-256 加密存儲）。</p>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <input type="password" id="setNewPasswordInput" placeholder="設定新密碼 (留空取消)">
                             <button onclick="savePasswordSetting()">儲存密碼設定</button>
@@ -748,7 +754,7 @@
     <script>
         // 全域 State 增強版
         let appState = {
-            password: localStorage.getItem('aura_password') || '',
+            passwordHash: localStorage.getItem('aura_password_hash') || '',
             subjects: JSON.parse(localStorage.getItem('aura_subjects')) || ["國文", "英文", "數學", "專業科目"],
             focusMins: parseInt(localStorage.getItem('aura_focusMins')) || 25,
             breakMins: parseInt(localStorage.getItem('aura_breakMins')) || 5,
@@ -790,7 +796,7 @@
         let gainNode = null;
 
         window.onload = function() {
-            if (appState.password) {
+            if (appState.passwordHash) {
                 document.getElementById('lockScreen').style.display = 'flex';
             }
 
@@ -805,16 +811,18 @@
             extractFlashcards();
             updateExamCountdown();
 
-            // 預載倒數計時欄位
             document.getElementById('examNameInput').value = appState.exam.name || '';
             document.getElementById('examDateInput').value = appState.exam.date || '';
         };
 
-        /* 密碼檢查 */
+        /* 安全 SHA-256 密碼檢查 */
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
-            if (input === appState.password) {
+            const inputHash = CryptoJS.SHA256(input).toString();
+            
+            if (inputHash === appState.passwordHash) {
                 document.getElementById('lockScreen').style.display = 'none';
+                document.getElementById('passwordInput').value = '';
             } else {
                 document.getElementById('lockMsg').innerText = '密碼不正確，請重新輸入';
             }
@@ -822,9 +830,17 @@
 
         function savePasswordSetting() {
             const newPwd = document.getElementById('setNewPasswordInput').value.trim();
-            appState.password = newPwd;
-            localStorage.setItem('aura_password', newPwd);
-            alert(newPwd ? '已成功設定解鎖密碼！' : '已取消密碼保護！');
+            if (newPwd === '') {
+                appState.passwordHash = '';
+                localStorage.removeItem('aura_password_hash');
+                alert('已取消密碼保護！');
+            } else {
+                const hash = CryptoJS.SHA256(newPwd).toString();
+                appState.passwordHash = hash;
+                localStorage.setItem('aura_password_hash', hash);
+                alert('已成功設定加密密碼！');
+            }
+            document.getElementById('setNewPasswordInput').value = '';
         }
 
         /* 倒數計時管理 */
@@ -1245,7 +1261,7 @@
             }
         }
 
-        /* 白噪音增強（音量調節 + 資源釋放） */
+        /* Web Audio API 白噪音控制與資源管理 */
         function toggleAudioNoise() {
             const type = document.getElementById('bgSoundSelect').value;
             if(type === 'pink') {
@@ -1280,8 +1296,12 @@
             } else {
                 if(noiseSource) {
                     noiseSource.stop();
-                    audioCtx.close();
-                    audioCtx = null; noiseSource = null; gainNode = null;
+                    noiseSource.disconnect();
+                    audioCtx.close().then(() => {
+                        audioCtx = null;
+                        noiseSource = null;
+                        gainNode = null;
+                    });
                 }
             }
         }
@@ -1368,7 +1388,9 @@
                         const imported = JSON.parse(ev.target.result);
                         if(imported.notes && imported.sessions) {
                             appState = imported;
-                            localStorage.setItem('aura_password', appState.password || '');
+                            if(appState.passwordHash) {
+                                localStorage.setItem('aura_password_hash', appState.passwordHash);
+                            }
                             localStorage.setItem('aura_subjects', JSON.stringify(appState.subjects));
                             localStorage.setItem('aura_focusMins', appState.focusMins);
                             localStorage.setItem('aura_breakMins', appState.breakMins);
