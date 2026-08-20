@@ -329,6 +329,54 @@
             color: var(--text-main);
         }
 
+        /* 閃卡系統 */
+        .flashcard-container {
+            min-height: 200px;
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .flashcard {
+            width: 100%;
+            max-width: 450px;
+            min-height: 220px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.02);
+            border-color: var(--accent);
+        }
+
+        /* 待辦清單 UI */
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.05);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .todo-item.completed span {
+            text-decoration: line-through;
+            color: var(--text-sub);
+        }
+
         /* 數據 Dashboard */
         .metrics-grid {
             display: grid;
@@ -423,7 +471,7 @@
             <h2 style="margin: 16px 0 8px 0; color: var(--accent);">歡迎使用 AuraStudy Studio Pro</h2>
             <p style="color: var(--text-sub); font-size: 0.9rem; line-height: 1.6; text-align: left; margin-bottom: 20px;">
                 🔒 <strong>客製化與隱私宣告：</strong><br>
-                1. <strong>實時自動儲存</strong>：所有筆記（輸入即存）、客製化主題、字體、科目與專注紀錄，都會實時寫入您瀏覽器的 LocalStorage。<br>
+                1. <strong>實時自動儲存</strong>：所有筆記（輸入即存）、待辦事項、客製化主題、科目與專注紀錄，都會實時寫入您瀏覽器的 LocalStorage。<br>
                 2. <strong>下次開啟自動載入</strong>：下次開啟網頁時，系統會自動回復您上次的排版、主題風格與筆記狀態。<br>
                 3. <strong>無伺服器上傳</strong>：所有資料均只在您的手機/電腦本地運行，完全保護隱私！
             </p>
@@ -438,14 +486,16 @@
             <div class="brand-logo">✨ AuraStudy Pro</div>
             <ul class="nav-list">
                 <li class="nav-item active" onclick="switchNavTab('timer', this)">⏱️ 專注工作站</li>
+                <li class="nav-item" onclick="switchNavTab('todo', this)">✅ 今日待辦清單</li>
                 <li class="nav-item" onclick="switchNavTab('notes', this)">📁 筆記庫 (自動儲存)</li>
+                <li class="nav-item" onclick="switchNavTab('cards', this)">🎴 閃卡複習卡片</li>
                 <li class="nav-item" onclick="switchNavTab('dashboard', this)">📊 學習統計數據</li>
                 <li class="nav-item" onclick="switchNavTab('custom', this)">🎨 客製化系統偏好</li>
             </ul>
             
             <div style="margin-top: auto;">
                 <div class="sync-indicator" id="autoSaveIndicator">
-                    <span>⚡</span> 筆記已即時同步儲存至本地
+                    <span>⚡</span> 資料已即時同步儲存至本地
                 </div>
             </div>
         </aside>
@@ -485,14 +535,27 @@
                 </div>
             </section>
 
-            <!-- 2. 筆記庫 (實時自動儲存) -->
+            <!-- 2. 今日待辦事項與任務清單 -->
+            <section id="todo" class="view-section">
+                <h2>✅ 今日待辦與任務清單</h2>
+                <div class="glass-panel" style="padding: 20px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                        <input type="text" id="todoInput" placeholder="新增學習任務/待辦事項..." style="flex: 1;" onkeypress="if(event.key==='Enter') addTodoItem()">
+                        <button onclick="addTodoItem()">新增任務</button>
+                    </div>
+                    <div id="todoListContainer"></div>
+                </div>
+            </section>
+
+            <!-- 3. 筆記庫 (實時自動儲存) -->
             <section id="notes" class="view-section">
                 <h2>模組化筆記庫 (即時寫入本地)</h2>
                 <div class="note-workspace">
                     <!-- 左側筆記列表 -->
                     <div class="glass-panel note-sidebar">
                         <button onclick="createNewNote()" style="width: 100%;">+ 新增文章</button>
-                        <div id="noteListContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                        <input type="text" id="searchNoteInput" placeholder="🔍 搜尋筆記..." style="margin-top: 8px;" oninput="renderNoteList()">
+                        <div id="noteListContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;"></div>
                     </div>
 
                     <!-- 右側編輯器 -->
@@ -519,7 +582,27 @@
                 </div>
             </section>
 
-            <!-- 3. 數據統計 -->
+            <!-- 4. 閃卡複習卡片 -->
+            <section id="cards" class="view-section">
+                <h2>🎴 閃卡記憶複習系統</h2>
+                <div class="glass-panel" style="padding: 24px; text-align: center;">
+                    <p style="color: var(--text-sub); font-size: 0.9rem;">系統自動從筆記庫讀取包含 ❓ 的「主動回想塊」作為閃卡來源[cite: 2]。</p>
+                    
+                    <div class="flashcard-container">
+                        <div class="flashcard" onclick="flipFlashcard()" id="flashcardBox">
+                            <span id="flashcardTag" style="font-size:0.8rem; color:var(--accent); margin-bottom:8px;">點擊翻牌</span>
+                            <div id="flashcardContent" style="font-size: 1.2rem; font-weight: bold;">目前沒有閃卡題目</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; justify-content: center; max-width: 300px; margin: 0 auto;">
+                        <button onclick="prevFlashcard()" style="flex:1; background:rgba(255,255,255,0.15);">上一張</button>
+                        <button onclick="nextFlashcard()" style="flex:1;">下一張</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 數據統計 -->
             <section id="dashboard" class="view-section">
                 <h2>專注數據與歷史紀錄</h2>
                 <div class="metrics-grid">
@@ -563,7 +646,7 @@
                 </div>
             </section>
 
-            <!-- 4. 完全客製化偏好設定 -->
+            <!-- 6. 完全客製化偏好設定 -->
             <section id="custom" class="view-section">
                 <h2>客製化系統偏好 (Customization)</h2>
                 
@@ -656,12 +739,13 @@
         </main>
     </div>
 
-    <!-- 手機版 Bottom Nav -->
+    <!-- 手機版 Bottom Nav (修復函式名稱拼錯[cite: 2]) -->
     <nav class="mobile-nav-bar">
         <div class="mobile-nav-btn active" onclick="switchNavTabMobile('timer', this)"><span>⏱️</span>計時</div>
-        <div class="mobile-nav-btn" onclick="switchNavNavMobile('notes', this)"><span>📁</span>筆記</div>
+        <div class="mobile-nav-btn" onclick="switchNavTabMobile('todo', this)"><span>✅</span>待辦</div>
+        <div class="mobile-nav-btn" onclick="switchNavTabMobile('notes', this)"><span>📁</span>筆記</div>
+        <div class="mobile-nav-btn" onclick="switchNavTabMobile('cards', this)"><span>🎴</span>閃卡</div>
         <div class="mobile-nav-btn" onclick="switchNavTabMobile('dashboard', this)"><span>📊</span>數據</div>
-        <div class="mobile-nav-btn" onclick="switchNavTabMobile('custom', this)"><span>🎨</span>客製</div>
     </nav>
 
     <script>
@@ -671,13 +755,17 @@
             focusMins: parseInt(localStorage.getItem('aura_focusMins')) || 25,
             breakMins: parseInt(localStorage.getItem('aura_breakMins')) || 5,
             sessions: JSON.parse(localStorage.getItem('aura_sessions')) || [],
+            todos: JSON.parse(localStorage.getItem('aura_todos')) || [
+                { id: 't1', text: '完成今天的第一個番茄鐘專注', completed: false }
+            ],
             notes: JSON.parse(localStorage.getItem('aura_notes')) || [
-                { id: 'default_1', title: '歡迎使用 AuraStudy 筆記', subject: '程式設計', content: '這是您的第一篇筆記。
-
-所有在此輸入的文字都會【自動即時儲存】至您的本地 LocalStorage 中，無需手動按儲存！
-
-❓ [試試點擊展開這題主動回想問題？]
-💡 答案：主動回想能強化長期記憶！', updatedAt: new Date().toLocaleString() }
+                { 
+                    id: 'default_1', 
+                    title: '歡迎使用 AuraStudy 筆記', 
+                    subject: '程式設計', 
+                    content: '這是您的第一篇筆記。\n\n所有在此輸入的文字都會【自動即時儲存】至您的本地 LocalStorage 中，無需手動按儲存！\n\n❓ [試試點擊展開這題主動回想問題？]\n💡 答案：主動回想能強化長期記憶！', 
+                    updatedAt: new Date().toLocaleString() 
+                }
             ],
             settings: JSON.parse(localStorage.getItem('aura_settings')) || {
                 theme: 'morandi',
@@ -696,6 +784,11 @@
         let sessionStartTime = null;
         let activeNoteId = appState.notes[0]?.id || null;
 
+        // 閃卡 state
+        let flashcardList = [];
+        let currentCardIndex = 0;
+        let isCardFlipped = false;
+
         // 音訊 state
         let audioCtx = null;
         let noiseSource = null;
@@ -705,10 +798,12 @@
             applyAllSavedCustomizations();
             renderSubjectDropdowns();
             renderSubjectManageList();
+            renderTodoList();
             renderNoteList();
             loadActiveNoteToEditor();
             updateTimerDisplay();
             renderDashboard();
+            extractFlashcards();
         };
 
         function closeNoticeModal() {
@@ -720,18 +815,20 @@
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            el.classList.add('active');
+            if(el) el.classList.add('active');
 
             if(tabId === 'dashboard') renderDashboard();
+            if(tabId === 'cards') extractFlashcards();
         }
 
         function switchNavTabMobile(tabId, el) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.mobile-nav-btn').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            el.classList.add('active');
+            if(el) el.classList.add('active');
 
             if(tabId === 'dashboard') renderDashboard();
+            if(tabId === 'cards') extractFlashcards();
         }
 
         /* 客製化樣式套用與載入 */
@@ -792,6 +889,53 @@
 
         function saveSettingsToStorage() {
             localStorage.setItem('aura_settings', JSON.stringify(appState.settings));
+        }
+
+        /* 待辦事項 Todo 功能 */
+        function renderTodoList() {
+            const container = document.getElementById('todoListContainer');
+            container.innerHTML = '';
+            appState.todos.forEach(todo => {
+                container.innerHTML += `
+                    <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                        <input type="checkbox" ${todo.completed ? 'checked' : ''} onchange="toggleTodo('${todo.id}')">
+                        <span style="flex: 1;">${todo.text}</span>
+                        <button onclick="bindTodoToTimer('${todo.text}')" style="font-size:0.75rem; background:rgba(255,255,255,0.15);">帶入番茄鐘</button>
+                        <button onclick="deleteTodo('${todo.id}')" style="font-size:0.75rem; background:#f87171;">刪除</button>
+                    </div>
+                `;
+            });
+        }
+
+        function addTodoItem() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            if(!text) return;
+            appState.todos.push({ id: 'todo_' + Date.now(), text, completed: false });
+            input.value = '';
+            localStorage.setItem('aura_todos', JSON.stringify(appState.todos));
+            renderTodoList();
+            showAutoSaveIndicator();
+        }
+
+        function toggleTodo(id) {
+            const item = appState.todos.find(t => t.id === id);
+            if(item) {
+                item.completed = !item.completed;
+                localStorage.setItem('aura_todos', JSON.stringify(appState.todos));
+                renderTodoList();
+            }
+        }
+
+        function deleteTodo(id) {
+            appState.todos = appState.todos.filter(t => t.id !== id);
+            localStorage.setItem('aura_todos', JSON.stringify(appState.todos));
+            renderTodoList();
+        }
+
+        function bindTodoToTimer(taskText) {
+            document.getElementById('sessionTagInput').value = taskText;
+            switchNavTab('timer', document.querySelectorAll('.nav-item')[0]);
         }
 
         /* 科目管理 */
@@ -867,7 +1011,7 @@
                     renderNoteList();
                     renderNotePreview();
                 }
-            }, 300); // 300ms 防抖即時寫入
+            }, 300);
         }
 
         function showAutoSaveIndicator() {
@@ -911,16 +1055,20 @@
 
         function renderNoteList() {
             const container = document.getElementById('noteListContainer');
+            const searchVal = (document.getElementById('searchNoteInput')?.value || '').toLowerCase();
             container.innerHTML = '';
-            appState.notes.forEach(n => {
-                const activeCls = n.id === activeNoteId ? 'active' : '';
-                container.innerHTML += `
-                    <div class="note-card-item ${activeCls}" onclick="switchActiveNote('${n.id}')">
-                        <strong style="font-size:0.9rem;">${n.title}</strong>
-                        <span style="font-size:0.75rem; color:var(--text-sub);">${n.subject} • ${n.updatedAt}</span>
-                    </div>
-                `;
-            });
+            
+            appState.notes
+                .filter(n => n.title.toLowerCase().includes(searchVal) || n.content.toLowerCase().includes(searchVal))
+                .forEach(n => {
+                    const activeCls = n.id === activeNoteId ? 'active' : '';
+                    container.innerHTML += `
+                        <div class="note-card-item ${activeCls}" onclick="switchActiveNote('${n.id}')">
+                            <strong style="font-size:0.9rem;">${n.title}</strong>
+                            <span style="font-size:0.75rem; color:var(--text-sub);">${n.subject} • ${n.updatedAt}</span>
+                        </div>
+                    `;
+                });
         }
 
         function switchActiveNote(id) {
@@ -932,29 +1080,19 @@
         function insertModule(type) {
             const input = document.getElementById('noteBodyInput');
             if(type === 'recall') {
-                input.value += `
-❓ [隱藏問題：在此填寫自我測驗題目？]
-💡 答案：(點擊下方展開檢視答案)
-`;
+                input.value += `\n❓ [隱藏問題：在此填寫自我測驗題目？]\n💡 答案：(點擊下方展開檢視答案)\n`;
             } else if(type === 'cornell') {
-                input.value += `
-【線索/關鍵字】:
-
-【筆記正文】:
-
-【總結 Summary】:
-`;
+                input.value += `\n【線索/關鍵字】:\n\n【筆記正文】:\n\n【總結 Summary】:\n`;
             }
             onNoteAutoSave();
         }
 
+        // 修正：修正修復正規表示式斷行語法崩潰[cite: 2]
         function renderNotePreview() {
             const raw = document.getElementById('noteBodyInput').value;
             const container = document.getElementById('notePreviewRender');
             
-            // 解析 ❓ 主動回想塊
-            let formatted = raw.replace(/❓\s*\[(.*?)\]
-💡\s*(.*)/g, (match, q, a) => {
+            let formatted = raw.replace(/❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g, (match, q, a) => {
                 return `
                     <div class="active-recall-block">
                         <div class="recall-question" onclick="toggleRecallAns(this)">❓ ${q} <span>▼</span></div>
@@ -963,13 +1101,67 @@
                 `;
             });
 
-            container.innerHTML = formatted.replace(/
-/g, '<br>');
+            container.innerHTML = formatted.replace(/\n/g, '<br>');
         }
 
         function toggleRecallAns(el) {
             const ans = el.nextElementSibling;
             ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+        }
+
+        /* 閃卡系統 Flashcards */
+        function extractFlashcards() {
+            flashcardList = [];
+            const regex = /❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g;
+            appState.notes.forEach(note => {
+                let match;
+                while ((match = regex.exec(note.content)) !== null) {
+                    flashcardList.push({ question: match[1], answer: match[2], subject: note.subject });
+                }
+            });
+
+            currentCardIndex = 0;
+            isCardFlipped = false;
+            renderFlashcard();
+        }
+
+        function renderFlashcard() {
+            const tag = document.getElementById('flashcardTag');
+            const content = document.getElementById('flashcardContent');
+            if(flashcardList.length === 0) {
+                tag.innerText = "提醒";
+                content.innerText = "目前筆記中無閃卡題目！請在筆記中插入『主動回想塊』。";
+                return;
+            }
+
+            const card = flashcardList[currentCardIndex];
+            if(isCardFlipped) {
+                tag.innerText = `💡 答案 (${card.subject}) - 點擊翻回問題`;
+                content.innerText = card.answer;
+            } else {
+                tag.innerText = `❓ 問題 (${currentCardIndex + 1}/${flashcardList.length}) - 點擊看答案`;
+                content.innerText = card.question;
+            }
+        }
+
+        function flipFlashcard() {
+            if(flashcardList.length === 0) return;
+            isCardFlipped = !isCardFlipped;
+            renderFlashcard();
+        }
+
+        function nextFlashcard() {
+            if(flashcardList.length === 0) return;
+            currentCardIndex = (currentCardIndex + 1) % flashcardList.length;
+            isCardFlipped = false;
+            renderFlashcard();
+        }
+
+        function prevFlashcard() {
+            if(flashcardList.length === 0) return;
+            currentCardIndex = (currentCardIndex - 1 + flashcardList.length) % flashcardList.length;
+            isCardFlipped = false;
+            renderFlashcard();
         }
 
         /* 計時器邏輯與靜心禪模式 */
@@ -1162,6 +1354,7 @@
                             localStorage.setItem('aura_focusMins', appState.focusMins);
                             localStorage.setItem('aura_breakMins', appState.breakMins);
                             localStorage.setItem('aura_sessions', JSON.stringify(appState.sessions));
+                            localStorage.setItem('aura_todos', JSON.stringify(appState.todos || []));
                             localStorage.setItem('aura_notes', JSON.stringify(appState.notes));
                             localStorage.setItem('aura_settings', JSON.stringify(appState.settings));
                             location.reload();
