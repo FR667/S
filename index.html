@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>讀書軟體 - 專業增強版</title>
+    <title>讀書軟體 - 臥室音樂輕量整合版</title>
     <!-- Chart.js 數據視覺化 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- CryptoJS 安全雜湊演算法 -->
@@ -127,7 +127,6 @@
             padding: 16px;
             gap: 16px;
             box-sizing: border-box;
-            overflow: hidden;
         }
 
         /* 側邊欄 Sidebar / 手機抽屜 Drawer */
@@ -139,7 +138,6 @@
             gap: 14px;
             flex-shrink: 0;
             transition: transform 0.3s ease-in-out;
-            overflow-y: auto;
         }
 
         .brand-header {
@@ -223,7 +221,6 @@
             height: 100%;
             overflow-y: auto;
             padding-right: 4px;
-            -webkit-overflow-scrolling: touch;
         }
 
         .view-section {
@@ -278,28 +275,6 @@
             position: relative;
         }
 
-        .mode-switch-container {
-            display: flex;
-            background: rgba(0,0,0,0.3);
-            padding: 4px;
-            border-radius: 30px;
-            border: 1px solid var(--glass-border);
-            gap: 4px;
-        }
-
-        .mode-btn {
-            background: transparent;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--text-sub);
-        }
-
-        .mode-btn.active {
-            background: var(--accent);
-            color: white;
-        }
-
         .timer-status-badge {
             background: rgba(129, 140, 248, 0.25);
             color: var(--accent);
@@ -311,7 +286,7 @@
         }
 
         .timer-text {
-            font-size: clamp(3rem, 11vw, 6.5rem);
+            font-size: clamp(3.2rem, 12vw, 7rem);
             font-weight: 800;
             font-family: 'Courier New', Courier, monospace;
             letter-spacing: 2px;
@@ -329,18 +304,29 @@
 
         .timer-btn-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
-            max-width: 380px;
+            max-width: 360px;
             justify-content: center;
-            flex-wrap: wrap;
         }
 
         .timer-btn-group button {
             flex: 1;
-            min-width: 100px;
             padding: 12px 0;
             font-size: 1rem;
+        }
+
+        /* 輕量音樂組件 */
+        .bedroom-audio-box {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         /* 全螢幕專注模式 (Zen Mode) */
@@ -385,7 +371,7 @@
             display: grid;
             grid-template-columns: 260px 1fr;
             gap: 16px;
-            min-height: calc(100vh - 80px);
+            height: calc(100vh - 80px);
         }
 
         .note-sidebar, .note-editor-panel {
@@ -393,6 +379,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            overflow-y: auto;
         }
 
         .note-card-item {
@@ -483,27 +470,21 @@
         /* 數據圖表與統計 */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
         }
 
         .metric-card {
-            padding: 18px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
 
         .metric-num {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 800;
             color: #a7f3d0;
-        }
-
-        .charts-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 16px;
         }
 
         .history-table {
@@ -521,7 +502,7 @@
 
         .history-table th { color: var(--text-sub); }
 
-        /* ===== 手機端直向（RWD）優化 ===== */
+        /* ===== 手機端抽屜選單與直向螢幕適配 ===== */
         @media (max-width: 768px) {
             body {
                 height: 100vh;
@@ -540,10 +521,8 @@
                 padding: 10px; 
                 height: calc(100vh - 56px);
                 flex-direction: column;
-                overflow: hidden;
             }
 
-            /* 側邊欄改為彈出 Drawer */
             aside {
                 position: fixed;
                 top: 0;
@@ -567,35 +546,30 @@
             main {
                 height: 100%;
                 padding-right: 0;
-                overflow-y: auto;
             }
 
             .view-section {
-                padding-bottom: 30px;
+                padding-bottom: 20px;
             }
 
             .note-workspace {
                 grid-template-columns: 1fr;
                 height: auto;
+                min-height: 100%;
             }
 
             .note-sidebar { 
-                max-height: 180px; 
+                max-height: 160px; 
                 overflow-y: auto;
             }
 
             .note-editor-panel {
-                min-height: 400px;
+                min-height: 380px;
             }
 
             .subject-input-group select,
             .subject-input-group input {
                 width: 100% !important;
-            }
-
-            .timer-btn-group button {
-                padding: 10px 0;
-                font-size: 0.9rem;
             }
 
             .history-table th, .history-table td {
@@ -653,8 +627,8 @@
                 <li class="nav-item" onclick="switchNavTab('todo', this)">✅ 今日任務</li>
                 <li class="nav-item" onclick="switchNavTab('notes', this)">📁 讀書筆記</li>
                 <li class="nav-item" onclick="switchNavTab('cards', this)">🎴 抽考閃卡</li>
-                <li class="nav-item" onclick="switchNavTab('dashboard', this)">📊 學習統計分析</li>
-                <li class="nav-item" onclick="switchNavTab('custom', this)">⚙️ 偏好與設定</li>
+                <li class="nav-item" onclick="switchNavTab('dashboard', this)">📊 學習統計</li>
+                <li class="nav-item" onclick="switchNavTab('custom', this)">⚙️ 軟體偏好與密碼</li>
             </ul>
         </aside>
 
@@ -663,12 +637,6 @@
             <!-- 1. 專注計時器 -->
             <section id="timer" class="view-section active">
                 <div class="glass-panel timer-wrapper">
-                    <!-- 計時模式切換鈕 -->
-                    <div class="non-zen-hide mode-switch-container">
-                        <button class="mode-btn active" id="modePomodoroBtn" onclick="switchTimerMode('pomodoro')">⏳ 番茄鐘 (倒數)</button>
-                        <button class="mode-btn" id="modeStopwatchBtn" onclick="switchTimerMode('stopwatch')">⏱️ 正向計時</button>
-                    </div>
-
                     <span class="timer-status-badge" id="timerModeTag">🎯 專注模式</span>
                     
                     <div class="non-zen-hide subject-input-group">
@@ -685,24 +653,40 @@
 
                     <div class="timer-btn-group">
                         <button id="startTimerBtn" onclick="toggleTimer()">開始專注</button>
-                        <button id="stopwatchSaveBtn" onclick="stopAndSaveStopwatch()" style="display:none; background:#10b981;">結束並記錄</button>
                         <button onclick="resetTimer()" style="background: rgba(255,255,255,0.15);">重設</button>
                         <button onclick="toggleZenMode()" style="background: rgba(255,255,255,0.15);">🧘 全螢幕</button>
                     </div>
 
-                    <div class="non-zen-hide" style="margin-top: 6px; display: flex; gap: 12px; align-items: center; font-size: 0.85rem; flex-wrap: wrap; justify-content: center;">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <span>🎧 白噪音：</span>
-                            <select id="bgSoundSelect" onchange="toggleAudioNoise()">
-                                <option value="none">關閉</option>
-                                <option value="pink">粉紅噪音 (專注降噪)</option>
+                    <!-- 輕量臥室音樂 & 環境音控制面板 -->
+                    <div class="non-zen-hide bedroom-audio-box">
+                        <div style="display: flex; gap: 10px; align-items: center; justify-content: space-between; font-size: 0.85rem;">
+                            <span style="font-weight: bold; color: var(--accent);">🎵 臥室輕量音樂/環境音：</span>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span>🔊</span>
+                                <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.3" style="width: 70px; padding: 0;" oninput="adjustVolume(this.value)">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; align-items: center; font-size: 0.85rem; flex-wrap: wrap;">
+                            <select id="bgSoundSelect" onchange="handleAudioSourceChange()" style="flex: 1;">
+                                <option value="none">🔇 靜音 / 關閉聲音</option>
+                                <option value="pink">🎧 粉紅降噪 (合成聲波)</option>
+                                <option value="custom_url">🔗 自訂線上音樂連結 (MP3/流媒體)</option>
+                                <option value="custom_file">📁 開啟本地音樂檔 (MP3/WAV)</option>
                             </select>
+                            <button id="audioPlayPauseBtn" onclick="toggleAudioPlay()" style="padding: 6px 12px; font-size: 0.8rem; display: none;">▶️ 播放</button>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <span>🔊 音量：</span>
-                            <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.2" style="width: 80px; padding: 0;" oninput="adjustVolume(this.value)">
+
+                        <!-- 隱藏的本地檔案與網址輸入框 -->
+                        <div id="customUrlInputContainer" style="display: none; width: 100%;">
+                            <input type="text" id="audioUrlInput" placeholder="貼上 MP3/音訊網址並回車..." style="width: 100%; font-size: 0.8rem;" onkeypress="if(event.key==='Enter') loadCustomAudioUrl()">
                         </div>
+                        <input type="file" id="audioFileInput" accept="audio/*" style="display: none;" onchange="loadCustomAudioFile(event)">
+                        
+                        <!-- 原生隱藏 audio 元素 -->
+                        <audio id="bedroomAudioPlayer" loop style="display: none;"></audio>
                     </div>
+
                 </div>
             </section>
 
@@ -728,8 +712,8 @@
                     </div>
 
                     <div class="glass-panel note-editor-panel">
-                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                            <input type="text" id="noteTitleInput" placeholder="筆記標題..." style="flex: 1; font-size: 1.1rem; font-weight: bold; min-width: 150px;" oninput="onNoteAutoSave()">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="text" id="noteTitleInput" placeholder="筆記標題..." style="flex: 1; font-size: 1.1rem; font-weight: bold;" oninput="onNoteAutoSave()">
                             <select id="noteSubjectDropdown" onchange="onNoteAutoSave()"></select>
                             <button onclick="deleteCurrentNote()" style="background: #f87171;">刪除</button>
                         </div>
@@ -770,10 +754,9 @@
                 </div>
             </section>
 
-            <!-- 5. 學習統計分析 -->
+            <!-- 5. 學習統計 -->
             <section id="dashboard" class="view-section">
-                <h2>📊 詳細學習數據分析</h2>
-                
+                <h2>📊 學習時長與數據</h2>
                 <div class="metrics-grid">
                     <div class="glass-panel metric-card">
                         <span style="color:var(--text-sub); font-size:0.85rem;">今日專注</span>
@@ -784,40 +767,20 @@
                         <div class="metric-num" id="metricTotal">0 小時</div>
                     </div>
                     <div class="glass-panel metric-card">
-                        <span style="color:var(--text-sub); font-size:0.85rem;">單次平均專注</span>
-                        <div class="metric-num" id="metricAvgSession">0 分鐘</div>
-                    </div>
-                    <div class="glass-panel metric-card">
-                        <span style="color:var(--text-sub); font-size:0.85rem;">最常研讀科目</span>
-                        <div class="metric-num" id="metricTopSubject" style="font-size: 1.2rem; color: #818cf8;">-</div>
-                    </div>
-                </div>
-
-                <div class="charts-container">
-                    <div class="glass-panel" style="padding: 20px;">
-                        <h3>📚 各科目時間分配</h3>
-                        <div style="height: 220px; position: relative; margin-top: 10px;">
-                            <canvas id="subjectDoughnutChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="glass-panel" style="padding: 20px;">
-                        <h3>📅 近7日研讀趨勢 (分鐘)</h3>
-                        <div style="height: 220px; position: relative; margin-top: 10px;">
-                            <canvas id="weeklyBarChart"></canvas>
-                        </div>
+                        <span style="color:var(--text-sub); font-size:0.85rem;">筆記篇數</span>
+                        <div class="metric-num" id="metricNotesCount">0 篇</div>
                     </div>
                 </div>
 
                 <div class="glass-panel" style="padding: 20px;">
-                    <h3>🕒 研讀時段偏好分析</h3>
-                    <div style="height: 200px; position: relative; margin-top: 10px;">
-                        <canvas id="timeSlotChart"></canvas>
+                    <h3>各科目時間分配</h3>
+                    <div style="height: 240px; position: relative; margin-top: 10px;">
+                        <canvas id="analyticsChart"></canvas>
                     </div>
                 </div>
 
                 <div class="glass-panel" style="padding: 20px;">
-                    <h3>📖 專注日誌紀錄</h3>
+                    <h3>專注日誌</h3>
                     <div style="overflow-x: auto; margin-top: 10px;">
                         <table class="history-table">
                             <thead>
@@ -825,7 +788,6 @@
                                     <th>日期</th>
                                     <th>科目</th>
                                     <th>時長</th>
-                                    <th>模式</th>
                                     <th>時段</th>
                                     <th>目標/備註</th>
                                 </tr>
@@ -836,7 +798,7 @@
                 </div>
             </section>
 
-            <!-- 6. 偏好與設定 -->
+            <!-- 6. 軟體偏好與設定 -->
             <section id="custom" class="view-section">
                 <h2>⚙️ 軟體偏好與客製化設定</h2>
                 
@@ -855,7 +817,7 @@
                     <!-- 密碼鎖設定 -->
                     <div class="glass-panel" style="padding: 20px;">
                         <h3>🔒 密碼保護</h3>
-                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，開啟網頁需解鎖。</p>
+                        <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，開啟網頁需解鎖（SHA-256 加密存儲）。</p>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <input type="password" id="setNewPasswordInput" placeholder="設定新密碼 (留空取消)">
                             <button onclick="savePasswordSetting()">儲存密碼設定</button>
@@ -874,7 +836,7 @@
 
                     <!-- 番茄鐘時間設定 -->
                     <div class="glass-panel" style="padding: 20px;">
-                        <h3>⏱️ 番茄鐘預設時間設定</h3>
+                        <h3>⏱️ 番茄鐘時間設定</h3>
                         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                             <div>
                                 <label style="font-size:0.85rem; color: var(--text-sub);">專注時間 (分鐘):</label>
@@ -944,12 +906,10 @@
             }
         };
 
-        let timerMode = 'pomodoro'; // 'pomodoro' 或 'stopwatch'
         let timerId = null;
         let isRunning = false;
         let isBreakMode = false;
-        let timeLeft = appState.focusMins * 60; // 番茄鐘剩餘秒數
-        let stopwatchSeconds = 0;             // 正向計時經過秒數
+        let timeLeft = appState.focusMins * 60;
         let sessionStartTime = null;
         let activeNoteId = appState.notes[0]?.id || null;
 
@@ -957,14 +917,11 @@
         let currentCardIndex = 0;
         let isCardFlipped = false;
 
+        /* 音訊管理變數 */
         let audioCtx = null;
         let noiseSource = null;
         let gainNode = null;
-
-        // Chart 實例
-        let chartDoughnut = null;
-        let chartWeekly = null;
-        let chartTimeSlot = null;
+        const player = document.getElementById('bedroomAudioPlayer');
 
         window.onload = function() {
             if (appState.passwordHash) {
@@ -986,7 +943,6 @@
             document.getElementById('examDateInput').value = appState.exam.date || '';
         };
 
-        /* 手機抽屜選單切換開關 */
         function toggleDrawer(open) {
             const drawer = document.getElementById('sideDrawer');
             const overlay = document.getElementById('drawerOverlay');
@@ -999,7 +955,6 @@
             }
         }
 
-        /* 導覽切換 */
         function switchNavTab(tabId, el) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1018,7 +973,6 @@
             if(tabId === 'cards') extractFlashcards();
         }
 
-        /* 密碼檢查 */
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
             const inputHash = CryptoJS.SHA256(input).toString();
@@ -1046,7 +1000,6 @@
             document.getElementById('setNewPasswordInput').value = '';
         }
 
-        /* 倒數計時管理 */
         function saveExamSetting() {
             const name = document.getElementById('examNameInput').value.trim() || '目標考試';
             const date = document.getElementById('examDateInput').value;
@@ -1069,7 +1022,6 @@
             document.getElementById('examCountdown').innerText = diffDays > 0 ? `倒數 ${diffDays} 天` : (diffDays === 0 ? '就是今天！' : '考試已結束');
         }
 
-        /* 主題與背景切換 */
         function applyThemeSetting(val, save=true) {
             const root = document.documentElement;
             if(val === 'default_img') {
@@ -1087,7 +1039,6 @@
             }
         }
 
-        /* 科目管理 */
         function renderSubjectDropdowns() {
             const tSel = document.getElementById('timerSubjectDropdown');
             const nSel = document.getElementById('noteSubjectDropdown');
@@ -1142,7 +1093,6 @@
             renderSubjectManageList();
         }
 
-        /* 待辦 Todo */
         function renderTodoList() {
             const container = document.getElementById('todoListContainer');
             container.innerHTML = '';
@@ -1196,12 +1146,11 @@
                 appState.breakMins = b;
                 localStorage.setItem('aura_focusMins', f);
                 localStorage.setItem('aura_breakMins', b);
-                if(timerMode === 'pomodoro') resetTimer();
+                resetTimer();
                 alert('時間設定已更新！');
             }
         }
 
-        /* 筆記系統 */
         let autoSaveTimer = null;
         function onNoteAutoSave() {
             if(autoSaveTimer) clearTimeout(autoSaveTimer);
@@ -1313,7 +1262,6 @@
             ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
         }
 
-        /* 閃卡 Flashcards */
         function extractFlashcards() {
             flashcardList = [];
             const regex = /❓\s*\[(.*?)\]\r?\n💡\s*(.*)/g;
@@ -1368,43 +1316,10 @@
             renderFlashcard();
         }
 
-        /* 計時器核心 (支援番茄鐘/正向計時) */
-        function switchTimerMode(mode) {
-            if(isRunning) {
-                if(!confirm('計時仍在進行中，切換模式將重置計時，確定切換嗎？')) return;
-            }
-            resetTimer();
-            timerMode = mode;
-
-            document.getElementById('modePomodoroBtn').classList.toggle('active', mode === 'pomodoro');
-            document.getElementById('modeStopwatchBtn').classList.toggle('active', mode === 'stopwatch');
-            
-            const saveBtn = document.getElementById('stopwatchSaveBtn');
-            if(mode === 'stopwatch') {
-                saveBtn.style.display = 'inline-block';
-                document.getElementById('timerModeTag').innerText = "⏱️ 正向計時中";
-            } else {
-                saveBtn.style.display = 'none';
-                document.getElementById('timerModeTag').innerText = "🎯 專注模式";
-            }
-            updateTimerDisplay();
-        }
-
         function updateTimerDisplay() {
-            if (timerMode === 'pomodoro') {
-                let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-                let s = (timeLeft % 60).toString().padStart(2, '0');
-                document.getElementById('timerDisplay').innerText = `${m}:${s}`;
-            } else {
-                let hrs = Math.floor(stopwatchSeconds / 3600);
-                let m = Math.floor((stopwatchSeconds % 3600) / 60).toString().padStart(2, '0');
-                let s = (stopwatchSeconds % 60).toString().padStart(2, '0');
-                if (hrs > 0) {
-                    document.getElementById('timerDisplay').innerText = `${hrs.toString().padStart(2, '0')}:${m}:${s}`;
-                } else {
-                    document.getElementById('timerDisplay').innerText = `${m}:${s}`;
-                }
-            }
+            let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            let s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
         }
 
         function toggleTimer() {
@@ -1415,17 +1330,12 @@
                 if(!sessionStartTime) sessionStartTime = new Date();
 
                 timerId = setInterval(() => {
-                    if (timerMode === 'pomodoro') {
-                        if(timeLeft > 0) {
-                            timeLeft--;
-                            updateTimerDisplay();
-                        } else {
-                            clearInterval(timerId);
-                            onTimerComplete();
-                        }
-                    } else {
-                        stopwatchSeconds++;
+                    if(timeLeft > 0) {
+                        timeLeft--;
                         updateTimerDisplay();
+                    } else {
+                        clearInterval(timerId);
+                        onTimerComplete();
                     }
                 }, 1000);
             } else {
@@ -1441,41 +1351,9 @@
             isBreakMode = false;
             sessionStartTime = null;
             timeLeft = appState.focusMins * 60;
-            stopwatchSeconds = 0;
+            document.getElementById('timerModeTag').innerText = "🎯 專注模式";
             document.getElementById('startTimerBtn').innerText = "開始專注";
-            if(timerMode === 'pomodoro') {
-                document.getElementById('timerModeTag').innerText = "🎯 專注模式";
-            } else {
-                document.getElementById('timerModeTag').innerText = "⏱️ 正向計時中";
-            }
             updateTimerDisplay();
-        }
-
-        function stopAndSaveStopwatch() {
-            if (stopwatchSeconds < 60) {
-                return alert('計時未滿 1 分鐘，暫不記錄。');
-            }
-            const mins = Math.round(stopwatchSeconds / 60);
-            const endTime = new Date();
-            const subject = document.getElementById('timerSubjectDropdown').value;
-            const tag = document.getElementById('sessionTagInput').value || '正向累加計時';
-
-            const rec = {
-                id: Date.now(),
-                subject,
-                duration: mins,
-                startTime: sessionStartTime ? sessionStartTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '',
-                endTime: endTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-                date: new Date().toLocaleDateString(),
-                tag,
-                mode: '正向計時'
-            };
-
-            appState.sessions.push(rec);
-            localStorage.setItem('aura_sessions', JSON.stringify(appState.sessions));
-
-            alert(`🎉 完成正向計時研讀！共 ${mins} 分鐘，已寫入報告。`);
-            resetTimer();
         }
 
         function toggleZenMode() {
@@ -1495,8 +1373,7 @@
                     startTime: sessionStartTime ? sessionStartTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '',
                     endTime: endTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
                     date: new Date().toLocaleDateString(),
-                    tag,
-                    mode: '番茄鐘'
+                    tag
                 };
                 appState.sessions.push(rec);
                 localStorage.setItem('aura_sessions', JSON.stringify(appState.sessions));
@@ -1513,48 +1390,105 @@
             }
         }
 
-        /* Web Audio API 白噪音控制 */
-        function toggleAudioNoise() {
+        /* ===== 輕量化臥室音樂 & 環境音核心邏輯 ===== */
+        function stopAllAudio() {
+            if(noiseSource) {
+                try { noiseSource.stop(); noiseSource.disconnect(); } catch(e){}
+                noiseSource = null;
+            }
+            if(audioCtx) {
+                audioCtx.close().then(() => { audioCtx = null; gainNode = null; });
+            }
+            const audio = document.getElementById('bedroomAudioPlayer');
+            audio.pause();
+            audio.currentTime = 0;
+            
+            const btn = document.getElementById('audioPlayPauseBtn');
+            btn.innerText = "▶️ 播放";
+        }
+
+        function handleAudioSourceChange() {
             const type = document.getElementById('bgSoundSelect').value;
+            const urlContainer = document.getElementById('customUrlInputContainer');
+            const playBtn = document.getElementById('audioPlayPauseBtn');
+            
+            stopAllAudio();
+            urlContainer.style.display = 'none';
+            playBtn.style.display = 'none';
+
             if(type === 'pink') {
-                if(!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    const bSize = audioCtx.sampleRate * 2;
-                    const buffer = audioCtx.createBuffer(1, bSize, audioCtx.sampleRate);
-                    const data = buffer.getChannelData(0);
-                    let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
-                    for (let i = 0; i < bSize; i++) {
-                        let white = Math.random() * 2 - 1;
-                        b0 = 0.99886 * b0 + white * 0.0555179;
-                        b1 = 0.99332 * b1 + white * 0.0750759;
-                        b2 = 0.96900 * b2 + white * 0.1538520;
-                        b3 = 0.86650 * b3 + white * 0.3104856;
-                        b4 = 0.55000 * b4 + white * 0.5329522;
-                        b5 = -0.7616 * b5 - white * 0.0168980;
-                        data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.05;
-                        b6 = white * 0.115926;
-                    }
-                    noiseSource = audioCtx.createBufferSource();
-                    noiseSource.buffer = buffer;
-                    noiseSource.loop = true;
+                startPinkNoise();
+            } else if(type === 'custom_url') {
+                urlContainer.style.display = 'block';
+                playBtn.style.display = 'inline-block';
+            } else if(type === 'custom_file') {
+                document.getElementById('audioFileInput').click();
+                playBtn.style.display = 'inline-block';
+            }
+        }
 
-                    gainNode = audioCtx.createGain();
-                    gainNode.gain.value = parseFloat(document.getElementById('volumeSlider').value);
-
-                    noiseSource.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-                    noiseSource.start();
+        function startPinkNoise() {
+            if(!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const bSize = audioCtx.sampleRate * 2;
+                const buffer = audioCtx.createBuffer(1, bSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+                for (let i = 0; i < bSize; i++) {
+                    let white = Math.random() * 2 - 1;
+                    b0 = 0.99886 * b0 + white * 0.0555179;
+                    b1 = 0.99332 * b1 + white * 0.0750759;
+                    b2 = 0.96900 * b2 + white * 0.1538520;
+                    b3 = 0.86650 * b3 + white * 0.3104856;
+                    b4 = 0.55000 * b4 + white * 0.5329522;
+                    b5 = -0.7616 * b5 - white * 0.0168980;
+                    data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.05;
+                    b6 = white * 0.115926;
                 }
+                noiseSource = audioCtx.createBufferSource();
+                noiseSource.buffer = buffer;
+                noiseSource.loop = true;
+
+                gainNode = audioCtx.createGain();
+                gainNode.gain.value = parseFloat(document.getElementById('volumeSlider').value);
+
+                noiseSource.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                noiseSource.start();
+            }
+        }
+
+        function loadCustomAudioUrl() {
+            const url = document.getElementById('audioUrlInput').value.trim();
+            if(!url) return;
+            const audio = document.getElementById('bedroomAudioPlayer');
+            audio.src = url;
+            audio.volume = parseFloat(document.getElementById('volumeSlider').value);
+            audio.play().then(() => {
+                document.getElementById('audioPlayPauseBtn').innerText = "⏸️ 暫停";
+            }).catch(e => alert("無法載入該音訊網址，請確認連結正確！"));
+        }
+
+        function loadCustomAudioFile(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const audio = document.getElementById('bedroomAudioPlayer');
+            audio.src = URL.createObjectURL(file);
+            audio.volume = parseFloat(document.getElementById('volumeSlider').value);
+            audio.play().then(() => {
+                document.getElementById('audioPlayPauseBtn').innerText = "⏸️ 暫停";
+            });
+        }
+
+        function toggleAudioPlay() {
+            const audio = document.getElementById('bedroomAudioPlayer');
+            const btn = document.getElementById('audioPlayPauseBtn');
+            if(audio.paused) {
+                audio.play();
+                btn.innerText = "⏸️ 暫停";
             } else {
-                if(noiseSource) {
-                    noiseSource.stop();
-                    noiseSource.disconnect();
-                    audioCtx.close().then(() => {
-                        audioCtx = null;
-                        noiseSource = null;
-                        gainNode = null;
-                    });
-                }
+                audio.pause();
+                btn.innerText = "▶️ 播放";
             }
         }
 
@@ -1562,34 +1496,21 @@
             if(gainNode) {
                 gainNode.gain.value = parseFloat(val);
             }
+            const audio = document.getElementById('bedroomAudioPlayer');
+            if(audio) {
+                audio.volume = parseFloat(val);
+            }
         }
 
-        /* 學習統計 DashBoard 報告進階分析 */
         function renderDashboard() {
             const todayStr = new Date().toLocaleDateString();
             const todayMins = appState.sessions.filter(s => s.date === todayStr).reduce((a, b) => a + b.duration, 0);
             const totalMins = appState.sessions.reduce((a, b) => a + b.duration, 0);
-            const totalCount = appState.sessions.length;
-            const avgMins = totalCount > 0 ? Math.round(totalMins / totalCount) : 0;
-
-            // 計算最常研讀科目
-            const subMap = {};
-            appState.sessions.forEach(s => subMap[s.subject] = (subMap[s.subject] || 0) + s.duration);
-            let topSub = '-';
-            let maxMins = 0;
-            for(let key in subMap) {
-                if(subMap[key] > maxMins) {
-                    maxMins = subMap[key];
-                    topSub = key;
-                }
-            }
 
             document.getElementById('metricToday').innerText = `${todayMins} 分鐘`;
             document.getElementById('metricTotal').innerText = `${(totalMins / 60).toFixed(1)} 小時`;
-            document.getElementById('metricAvgSession').innerText = `${avgMins} 分鐘`;
-            document.getElementById('metricTopSubject').innerText = topSub;
+            document.getElementById('metricNotesCount').innerText = `${appState.notes.length} 篇`;
 
-            // 表格歷史紀錄
             const tbody = document.getElementById('historyTableBody');
             tbody.innerHTML = '';
             appState.sessions.slice().reverse().forEach(s => {
@@ -1598,31 +1519,30 @@
                         <td>${s.date}</td>
                         <td><strong>${s.subject}</strong></td>
                         <td>${s.duration} 分鐘</td>
-                        <td><span style="font-size:0.75rem; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">${s.mode || '番茄鐘'}</span></td>
                         <td>${s.startTime} ~ ${s.endTime}</td>
                         <td style="color:var(--text-sub);">${s.tag}</td>
                     </tr>
                 `;
             });
 
-            renderCharts();
+            renderChart();
         }
 
-        function renderCharts() {
-            if(typeof Chart === 'undefined') return;
+        let chartObj = null;
+        function renderChart() {
+            const ctx = document.getElementById('analyticsChart');
+            if(!ctx || typeof Chart === 'undefined') return;
 
-            // 1. 科目圓餅圖
-            const subMap = {};
-            appState.sessions.forEach(s => subMap[s.subject] = (subMap[s.subject] || 0) + s.duration);
-            
-            const ctxDoughnut = document.getElementById('subjectDoughnutChart');
-            if(chartDoughnut) chartDoughnut.destroy();
-            chartDoughnut = new Chart(ctxDoughnut, {
+            const map = {};
+            appState.sessions.forEach(s => map[s.subject] = (map[s.subject] || 0) + s.duration);
+
+            if(chartObj) chartObj.destroy();
+            chartObj = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(subMap),
+                    labels: Object.keys(map),
                     datasets: [{
-                        data: Object.values(subMap),
+                        data: Object.values(map),
                         backgroundColor: ['#818cf8', '#34d399', '#fbbf24', '#f472b6', '#38bdf8', '#c084fc']
                     }]
                 },
@@ -1632,81 +1552,8 @@
                     plugins: { legend: { labels: { color: '#f8fafc' } } }
                 }
             });
-
-            // 2. 近7日讀書趨勢長條圖
-            const last7Days = [];
-            const weeklyData = [];
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                const dStr = d.toLocaleDateString();
-                last7Days.push(`${d.getMonth()+1}/${d.getDate()}`);
-                
-                const sumMins = appState.sessions.filter(s => s.date === dStr).reduce((a,b) => a + b.duration, 0);
-                weeklyData.push(sumMins);
-            }
-
-            const ctxWeekly = document.getElementById('weeklyBarChart');
-            if(chartWeekly) chartWeekly.destroy();
-            chartWeekly = new Chart(ctxWeekly, {
-                type: 'bar',
-                data: {
-                    labels: last7Days,
-                    datasets: [{
-                        label: '研讀分鐘數',
-                        data: weeklyData,
-                        backgroundColor: '#818cf8',
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        x: { ticks: { color: '#cbd5e1' }, grid: { display: false } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-
-            // 3. 時段偏好雷達/柱狀分析 (晨間, 下午, 晚上, 深夜)
-            const timeSlots = { '清晨(05-10)': 0, '白天(10-17)': 0, '晚上(17-22)': 0, '深夜(22-05)': 0 };
-            appState.sessions.forEach(s => {
-                if(!s.startTime) return;
-                const hour = parseInt(s.startTime.split(':')[0]) || 0;
-                if(hour >= 5 && hour < 10) timeSlots['清晨(05-10)'] += s.duration;
-                else if(hour >= 10 && hour < 17) timeSlots['白天(10-17)'] += s.duration;
-                else if(hour >= 17 && hour < 22) timeSlots['晚上(17-22)'] += s.duration;
-                else timeSlots['深夜(22-05)'] += s.duration;
-            });
-
-            const ctxSlot = document.getElementById('timeSlotChart');
-            if(chartTimeSlot) chartTimeSlot.destroy();
-            chartTimeSlot = new Chart(ctxSlot, {
-                type: 'polarArea',
-                data: {
-                    labels: Object.keys(timeSlots),
-                    datasets: [{
-                        data: Object.values(timeSlots),
-                        backgroundColor: [
-                            'rgba(251, 191, 36, 0.7)',
-                            'rgba(56, 189, 248, 0.7)',
-                            'rgba(129, 140, 248, 0.7)',
-                            'rgba(244, 114, 182, 0.7)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#f8fafc' }, position: 'right' } },
-                    scales: { r: { ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.1)' } } }
-                }
-            });
         }
 
-        /* 備份與匯入 */
         function exportJSONBackup() {
             const blob = new Blob([JSON.stringify(appState, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
