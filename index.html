@@ -77,6 +77,49 @@
             gap: 16px;
         }
 
+        /* 手機端頂部列 (Header bar) */
+        .mobile-header {
+            display: none;
+            height: 56px;
+            padding: 0 16px;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 800;
+        }
+
+        .mobile-menu-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* 抽屜式遮罩與菜單 */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .drawer-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
         .app-layout {
             display: flex;
             flex: 1;
@@ -86,7 +129,7 @@
             box-sizing: border-box;
         }
 
-        /* 側邊欄 Sidebar */
+        /* 側邊欄 Sidebar / 手機抽屜 Drawer */
         aside {
             width: 280px;
             padding: 20px 16px;
@@ -94,19 +137,26 @@
             flex-direction: column;
             gap: 14px;
             flex-shrink: 0;
+            transition: transform 0.3s ease-in-out;
         }
 
         .brand-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
             padding-bottom: 12px;
             border-bottom: 1px solid var(--glass-border);
         }
 
+        .brand-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .brand-avatar {
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--accent);
@@ -114,11 +164,20 @@
         }
 
         .brand-title {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: 800;
             background: linear-gradient(45deg, #c084fc, var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+
+        .drawer-close-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.3rem;
+            color: var(--text-sub);
+            cursor: pointer;
         }
 
         .nav-list {
@@ -155,34 +214,6 @@
             border-radius: 14px;
             border: 1px solid var(--glass-border);
         }
-
-        /* 手機端 Bottom Nav */
-        .mobile-nav-bar {
-            display: none;
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            height: 65px;
-            z-index: 900;
-            border-radius: 20px 20px 0 0;
-            justify-content: space-around;
-            align-items: center;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .mobile-nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            cursor: pointer;
-            gap: 4px;
-        }
-
-        .mobile-nav-btn.active { color: var(--accent); }
-        .mobile-nav-btn span { font-size: 1.2rem; }
 
         /* 主內容區 */
         main {
@@ -285,7 +316,7 @@
             font-size: 1rem;
         }
 
-        /* 全螢幕專注模式 (Zen Mode) 優化 */
+        /* 全螢幕專注模式 (Zen Mode) */
         .zen-exit-btn {
             display: none;
             position: fixed;
@@ -303,19 +334,15 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
 
-        .zen-exit-btn:hover {
-            background: rgba(220, 38, 38, 1);
-        }
+        .zen-exit-btn:hover { background: rgba(220, 38, 38, 1); }
 
+        .zen-active .mobile-header,
         .zen-active .app-layout > aside,
-        .zen-active .mobile-nav-bar,
         .zen-active .non-zen-hide {
             display: none !important;
         }
 
-        .zen-active .zen-exit-btn {
-            display: block;
-        }
+        .zen-active .zen-exit-btn { display: block; }
 
         .zen-active .timer-wrapper {
             position: fixed;
@@ -462,45 +489,70 @@
 
         .history-table th { color: var(--text-sub); }
 
-        /* ===== 手機版與直向螢幕適配與排版修復 ===== */
+        /* ===== 手機端抽屜選單與直向螢幕適配 ===== */
         @media (max-width: 768px) {
             body {
                 height: 100vh;
                 overflow: hidden;
             }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .drawer-close-btn {
+                display: block;
+            }
+
             .app-layout { 
                 padding: 10px; 
-                height: 100vh;
+                height: calc(100vh - 56px);
                 flex-direction: column;
             }
-            aside { display: none; }
-            .mobile-nav-bar { display: flex; }
+
+            /* 將 Sidebar 轉為滑出式抽屜 (Drawer) */
+            aside {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 280px;
+                z-index: 1001;
+                background: rgba(15, 23, 42, 0.95);
+                backdrop-filter: blur(25px);
+                -webkit-backdrop-filter: blur(25px);
+                transform: translateX(-100%);
+                border-radius: 0;
+                border-right: 1px solid var(--glass-border);
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+            }
+
+            aside.drawer-open {
+                transform: translateX(0);
+            }
             
             main {
-                padding-bottom: 80px; /* 留出底部導覽列空間 */
-                height: calc(100vh - 20px);
+                height: 100%;
+                padding-right: 0;
             }
 
             .view-section {
-                padding-bottom: 60px;
+                padding-bottom: 20px;
             }
 
-            /* 筆記區直線化彈性調整 */
             .note-workspace {
                 grid-template-columns: 1fr;
                 height: auto;
                 min-height: 100%;
             }
+
             .note-sidebar { 
                 max-height: 160px; 
                 overflow-y: auto;
             }
+
             .note-editor-panel {
                 min-height: 380px;
-            }
-
-            .subject-input-group {
-                flex-direction: row;
             }
 
             .subject-input-group select,
@@ -517,7 +569,7 @@
 </head>
 <body>
 
-    <!-- Zen Mode 行動/桌面 懸浮退出按鈕 -->
+    <!-- Zen Mode 懸浮退出按鈕 -->
     <button class="zen-exit-btn" onclick="toggleZenMode()">❌ 退出全螢幕專注</button>
 
     <!-- 密碼鎖畫面 -->
@@ -530,13 +582,26 @@
         </div>
     </div>
 
+    <!-- 手機版頂部工具列 -->
+    <header class="mobile-header">
+        <button class="mobile-menu-btn" onclick="toggleDrawer(true)">☰</button>
+        <div class="brand-title" style="font-size: 1.1rem;">讀書軟體</div>
+        <div style="width: 24px;"></div><!-- 佔位維持標題居中 -->
+    </header>
+
+    <!-- 手機抽屜背景遮罩 -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer(false)"></div>
+
     <!-- 應用主要版面 -->
     <div class="app-layout" id="appLayout">
-        <!-- 桌面側邊欄 -->
-        <aside class="glass-panel">
+        <!-- 側邊欄 Sidebar / 手機 Drawer -->
+        <aside class="glass-panel" id="sideDrawer">
             <div class="brand-header">
-                <img src="https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg" alt="Logo" class="brand-avatar">
-                <div class="brand-title">讀書軟體</div>
+                <div class="brand-info">
+                    <img src="https://i.ibb.co/S448R48W/601c6d40-e9b2-4630-af2c-3710fb257eb1.jpg" alt="Logo" class="brand-avatar">
+                    <div class="brand-title">讀書軟體</div>
+                </div>
+                <button class="drawer-close-btn" onclick="toggleDrawer(false)">✕</button>
             </div>
 
             <!-- 倒數計時區塊 -->
@@ -720,7 +785,7 @@
                         </div>
                     </div>
                     
-                    <!-- 密碼鎖設定 (哈希安全儲存) -->
+                    <!-- 密碼鎖設定 -->
                     <div class="glass-panel" style="padding: 20px;">
                         <h3>🔒 密碼保護</h3>
                         <p style="font-size:0.82rem; color:var(--text-sub); margin: 6px 0 12px 0;">設定密碼後，開啟網頁需解鎖（SHA-256 加密存儲）。</p>
@@ -784,17 +849,7 @@
         </main>
     </div>
 
-    <!-- 手機版 Bottom Nav -->
-    <nav class="mobile-nav-bar">
-        <div class="mobile-nav-btn active" onclick="switchNavTabMobile('timer', this)"><span>⏱️</span>計時</div>
-        <div class="mobile-nav-btn" onclick="switchNavTabMobile('todo', this)"><span>✅</span>待辦</div>
-        <div class="mobile-nav-btn" onclick="switchNavTabMobile('notes', this)"><span>📁</span>筆記</div>
-        <div class="mobile-nav-btn" onclick="switchNavTabMobile('cards', this)"><span>🎴</span>閃卡</div>
-        <div class="mobile-nav-btn" onclick="switchNavTabMobile('dashboard', this)"><span>📊</span>統計</div>
-    </nav>
-
     <script>
-        // 全域 State 增強版
         let appState = {
             passwordHash: localStorage.getItem('aura_password_hash') || '',
             subjects: JSON.parse(localStorage.getItem('aura_subjects')) || ["國文", "英文", "數學", "專業科目"],
@@ -857,6 +912,40 @@
             document.getElementById('examDateInput').value = appState.exam.date || '';
         };
 
+        /* 手機抽屜選單切換開關 */
+        function toggleDrawer(open) {
+            const drawer = document.getElementById('sideDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            if (open) {
+                drawer.classList.add('drawer-open');
+                overlay.classList.add('active');
+            } else {
+                drawer.classList.remove('drawer-open');
+                overlay.classList.remove('active');
+            }
+        }
+
+        /* 導覽切換 */
+        function switchNavTab(tabId, el) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            // 標記目前點擊的項目
+            if(el) {
+                const targetText = el.innerText;
+                document.querySelectorAll('.nav-item').forEach(n => {
+                    if(n.innerText === targetText) n.classList.add('active');
+                });
+            }
+
+            // 手機版切換時自動收起抽屜
+            toggleDrawer(false);
+
+            if(tabId === 'dashboard') renderDashboard();
+            if(tabId === 'cards') extractFlashcards();
+        }
+
         /* 安全 SHA-256 密碼檢查 */
         function checkPassword() {
             const input = document.getElementById('passwordInput').value;
@@ -906,27 +995,6 @@
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             
             document.getElementById('examCountdown').innerText = diffDays > 0 ? `倒數 ${diffDays} 天` : (diffDays === 0 ? '就是今天！' : '考試已結束');
-        }
-
-        /* 導覽切換 */
-        function switchNavTab(tabId, el) {
-            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if(el) el.classList.add('active');
-
-            if(tabId === 'dashboard') renderDashboard();
-            if(tabId === 'cards') extractFlashcards();
-        }
-
-        function switchNavTabMobile(tabId, el) {
-            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.mobile-nav-btn').forEach(n => n.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            if(el) el.classList.add('active');
-
-            if(tabId === 'dashboard') renderDashboard();
-            if(tabId === 'cards') extractFlashcards();
         }
 
         /* 主題與背景切換 */
@@ -1228,7 +1296,7 @@
             renderFlashcard();
         }
 
-        /* 計時器與全螢幕 Mode */
+        /* 計時器與 Mode */
         function updateTimerDisplay() {
             let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
             let s = (timeLeft % 60).toString().padStart(2, '0');
@@ -1303,7 +1371,7 @@
             }
         }
 
-        /* Web Audio API 白噪音控制與資源管理 */
+        /* Web Audio API 白噪音控制 */
         function toggleAudioNoise() {
             const type = document.getElementById('bgSoundSelect').value;
             if(type === 'pink') {
